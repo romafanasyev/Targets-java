@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Targets</string>
+    <string name="title_main">Main</string>
+    <string name="title_personal">Personal</string>
+    <string name="title_work">Work</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_more">More</string>
+    <string name="add_page">+ Add page</string>
+    <string name="action_button_page">Actions with page</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
+    <string name="title">Title</string>
+    <string name="change_title">Change title</string>
+    <string name="category">Category...</string>
+    <string name="delete">Delete</string>
+    <string name="new_page">New page</string>
+    <string name="delete_message">Are you sure? All cards on this page and all their instances will be deleted.</string>
+    <string name="categorize">Add to category</string>
+    <string name="category_title">Category title (not required)</string>
+    <string name="selected"> selected</string>
+</resources>

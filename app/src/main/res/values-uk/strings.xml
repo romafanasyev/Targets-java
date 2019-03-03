@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Targets</string>
+    <string name="title_main">Головна</string>
+    <string name="title_personal">Особисте</string>
+    <string name="title_work">Робоче</string>
+    <string name="title_notifications">Сповіщення</string>
+    <string name="title_more">Більше</string>
+    <string name="add_page">+ Додати сторінку</string>
+    <string name="action_button_page">Дії зі сторінкою</string>
+    <string name="yes">Так</string>
+    <string name="cancel">Відміна</string>
+    <string name="title">Назва</string>
+    <string name="change_title">Змінити назву</string>
+    <string name="category">Категорія…</string>
+    <string name="delete">Видалити</string>
+    <string name="new_page">Нова сторінка</string>
+    <string name="delete_message">Ви впевнені? Всі картки на цій сторінці будуть видалені (включно з усіма екземплярами).</string>
+    <string name="categorize">Додати до категорії</string>
+    <string name="category_title">Назва категорії (не обов\'язково)</string>
+    <string name="selected"> обрано</string>
+</resources>
