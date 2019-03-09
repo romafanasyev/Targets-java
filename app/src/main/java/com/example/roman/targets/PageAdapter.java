@@ -135,8 +135,21 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                             deleteBuilder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    ArrayList<Card> pageCards = MainActivity.db.findPageCards(MainActivity.allPagesList.get(position).id);
+                                    for (int i = 0; i < pageCards.size(); i++) {
+                                        Card c = new Card();
+                                        c.id = pageCards.get(i).id;
+                                        MainActivity.db.removeCard(c);
+                                        try {
+                                            MainActivity.db.editPage(MainActivity.allPagesList.get(MainActivity.allPagesList.get(position).id));
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
                                     MainActivity.db.removePage(MainActivity.allPagesList.get(holder.getAdapterPosition()));
                                     MainActivity.allPagesList.remove(holder.getAdapterPosition());
+
                                     pageAdapter.notifyDataSetChanged();
                                 }
                             });
