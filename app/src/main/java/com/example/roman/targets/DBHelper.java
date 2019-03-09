@@ -11,7 +11,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.Inet4Address;
 import java.util.ArrayList;
 
 public class DBHelper extends SQLiteOpenHelper {
@@ -31,17 +30,9 @@ public class DBHelper extends SQLiteOpenHelper {
         public static final String COLUMN_CARDS="cards";
         public static final String COLUMN_SECTION="section";
     }
-    public static class CardsTable implements BaseColumns
-    {
-        public static final String TABLE_NAME = "cards_table";
-        public static final String COLUMN_ID="id";
-        public static final String COLUMN_TEXT="text";
-        public static final String COLUMN_TITLE="title";
-    }
 
-    public  DBHelper(Context context)
-    {
-        super(context,DATABASE_NAME,null,DATABASE_VERSION);
+    public DBHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
@@ -63,11 +54,21 @@ public class DBHelper extends SQLiteOpenHelper {
 
         final String SQL_CREATE_CARDS_TABLE = "CREATE TABLE " +
                 DBHelper.CardsTable.TABLE_NAME + " ( " +
-                DBHelper.CardsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                CardsTable.COLUMN_ID + " INTEGER, " +
                 DBHelper.CardsTable.COLUMN_TEXT + " TEXT, " +
-                DBHelper.CardsTable.COLUMN_TITLE + " TEXT " +
+                DBHelper.CardsTable.COLUMN_TITLE + " TEXT, " +
+                DBHelper.CardsTable.COLUMN_PAGE_ID + " TEXT " +
                 ")";
         db.execSQL(SQL_CREATE_CARDS_TABLE);
+    }
+
+    public void addCard(Card card) {
+        ContentValues cv = new ContentValues();
+        cv.put(CardsTable.COLUMN_ID, card.id);
+        cv.put(CardsTable.COLUMN_TEXT, card.text);
+        cv.put(CardsTable.COLUMN_TITLE, card.title);
+        cv.put(CardsTable.COLUMN_PAGE_ID, card.pageid);
+        db.insert(CardsTable.TABLE_NAME, null, cv);
     }
 
     public void addPage(Page page) throws JSONException {
@@ -86,33 +87,44 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert(PagesTable.TABLE_NAME, null, cv);
     }
 
-    public Card getCard(int id)
-    {
-        Cursor c = db.rawQuery("SELECT * FROM " + CardsTable.TABLE_NAME, null);
-        Card card = new Card();
-        c.moveToPosition(id);
-
-        card.id = c.getInt(c.getColumnIndex(CardsTable._ID));
-        card.text = c.getString(c.getColumnIndex(CardsTable.COLUMN_TEXT));
-        card.title = c.getString(c.getColumnIndex(CardsTable.COLUMN_TITLE));
-        c.close();
-        return card;
-    }
-
-    public void addCard(Card card) {
-        ContentValues cv = new ContentValues();
-        cv.put(CardsTable.COLUMN_TEXT, card.text);
-        cv.put(CardsTable.COLUMN_TITLE, card.title);
-        db.insert(CardsTable.TABLE_NAME, null, cv);
-    }
-
     public int editCard(Card card) {
         ContentValues cv = new ContentValues();
         cv.put(CardsTable.COLUMN_TEXT, card.text);
         cv.put(CardsTable.COLUMN_TITLE, card.title);
+        cv.put(CardsTable.COLUMN_PAGE_ID, card.pageid);
 
         return db.update(CardsTable.TABLE_NAME, cv, CardsTable.COLUMN_ID + " = ?",
                 new String[]{String.valueOf(card.id)});
+    }
+
+    public void removeCard(Card card) {
+        db.delete(CardsTable.TABLE_NAME, CardsTable.COLUMN_ID + " = ?", new String[]{Integer.toString(card.id)});
+    }
+
+    public ArrayList<Card> findPageCards(int pageId) {
+        ArrayList<Card> list = new ArrayList<>();
+        Cursor c = db.rawQuery("SELECT * FROM " + CardsTable.TABLE_NAME + " WHERE " + CardsTable.COLUMN_PAGE_ID + "=?", new String[]{Integer.toString(pageId)});
+        if (c.moveToFirst()) {
+            do {
+                Card card = new Card();
+                card.id = c.getInt(c.getColumnIndex(CardsTable.COLUMN_ID));
+                card.pageid = c.getInt(c.getColumnIndex(CardsTable.COLUMN_PAGE_ID));
+                card.title = c.getString(c.getColumnIndex(CardsTable.COLUMN_TITLE));
+                card.text = c.getString(c.getColumnIndex(CardsTable.COLUMN_TEXT));
+                list.add(card);
+            }
+            while (c.moveToNext());
+        }
+        c.close();
+        return list;
+    }
+
+    public static class CardsTable implements BaseColumns {
+        public static final String TABLE_NAME = "cards_table";
+        public static final String COLUMN_ID = "id";
+        public static final String COLUMN_TEXT = "text";
+        public static final String COLUMN_TITLE = "title";
+        public static final String COLUMN_PAGE_ID = "page_id";
     }
 
     public int editPage(Page page) throws JSONException {

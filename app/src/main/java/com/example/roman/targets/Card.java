@@ -4,9 +4,12 @@ public class Card {
     int id;
     String title;
     String text;
+    int pageid;
 
-    Card(String title, String text)
+    Card(int id, int pageid, String title, String text)
     {
+        this.id = id;
+        this.pageid = pageid;
         this.title = title;
         this.text = text;
     }

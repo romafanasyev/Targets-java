@@ -3,15 +3,8 @@ package com.example.roman.targets;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +15,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 
-import java.util.ArrayList;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 
 /**
@@ -38,8 +33,6 @@ public class CardsFragment extends Fragment {
     private static final String ARG_PAGE_ID = "param1";
 
     private int pageID;
-    private ArrayList<Integer> cardsList;
-    public static ArrayList<Integer> selectedCardsList = new ArrayList<>();
 
     private OnFragmentInteractionListener mListener;
 
@@ -60,7 +53,6 @@ public class CardsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             pageID = getArguments().getInt(ARG_PAGE_ID);
-            cardsList = MainActivity.allPagesList.get(pageID).cards;
         }
     }
 
@@ -85,7 +77,7 @@ public class CardsFragment extends Fragment {
         mLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new CardAdapter(cardsList, pageID);
+        mAdapter = new CardAdapter(pageID);
         mRecyclerView.setAdapter(mAdapter);
 
         // add card button & dialog
@@ -111,7 +103,7 @@ public class CardsFragment extends Fragment {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
 
-                        Card res = new Card(mTitle.getText().toString(), mText.getText().toString());
+                        Card res = new Card(MainActivity.db.cardTableSize(), pageID, mTitle.getText().toString(), mText.getText().toString());
                         MainActivity.db.addCard(res);
                         MainActivity.allPagesList.get(pageID).cards.add(MainActivity.db.cardTableSize()-1);
                         try {

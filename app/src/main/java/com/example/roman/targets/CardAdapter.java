@@ -1,11 +1,7 @@
 package com.example.roman.targets;
 
 import android.graphics.Color;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.text.method.KeyListener;
 import android.view.ActionMode;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,14 +13,13 @@ import android.widget.TextView;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterViewHolder> {
     private int pageId;
-    private ArrayList<Integer> mDataset;
+    private ArrayList<Card> mDataset;
     private boolean selectionMode = false;
     ArrayList<Integer> selectedCards = new ArrayList<>();
 
@@ -47,9 +42,35 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         }
     }
 
-    public CardAdapter(ArrayList<Integer> myDataset, int pageId) {
-        mDataset = myDataset; this.pageId = pageId;
-    }
+    private ActionMode.Callback callback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.setTitle("1 " + MainActivity.getActivityContext().getResources().getString(R.string.selected));
+            mode.getMenuInflater().inflate(R.menu.card_actions, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            if (item.getItemId() == R.id.delete_card) {
+                removeCards();
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            selectionMode = false;
+            selectedCards.clear();
+            notifyDataSetChanged();
+        }
+    };
 
     // Create new views (invoked by the layout manager)
     @Override
@@ -62,18 +83,28 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         return vh;
     }
 
+    public CardAdapter(int pageId) {
+        this.pageId = pageId;
+        mDataset = MainActivity.db.findPageCards(pageId);
+    }
+
+    // Return the size of your dataset (invoked by the layout manager)
+    @Override
+    public int getItemCount() {
+        return mDataset.size();
+    }
+
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final CardAdapterViewHolder holder, final int position) {
-        final Card currentCard = MainActivity.db.getCard(mDataset.get(position));
+        final Card currentCard = mDataset.get(position);
 
         //all listeners:
         // select card for editing
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (selectionMode)
-                {
+                if (selectionMode) {
                     if (!selectedCards.contains(currentCard.id))
                         selectedCards.add(currentCard.id);
                     else selectedCards.remove(new Integer(currentCard.id));
@@ -89,8 +120,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         View.OnLongClickListener longListener = new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (!selectionMode)
-                {
+                if (!selectionMode) {
                     showActions();
                     selectedCards.add(currentCard.id);
                     notifyDataSetChanged();
@@ -141,7 +171,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
 
         if (selectedCards.contains(currentCard.id))
             holder.itemView.setBackgroundColor(Color.LTGRAY);
-        else holder.itemView.setBackgroundColor(MainActivity.getActivityContext().getResources().getColor(R.color.design_default_color_background));
+        else
+            holder.itemView.setBackgroundColor(MainActivity.getActivityContext().getResources().getColor(R.color.design_default_color_background));
 
         if (selectedCards.isEmpty())
             hideActions();
@@ -160,12 +191,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         holder.mText.setOnClickListener(clickListener);
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
-    @Override
-    public int getItemCount() {
-        return mDataset.size();
-    }
-
     public void showActions()
     {
         selectionMode = true;
@@ -179,33 +204,17 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         }
     }
 
-    private ActionMode.Callback callback = new ActionMode.Callback() {
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mode.setTitle("1 " + MainActivity.getActivityContext().getResources().getString(R.string.selected));
-            mode.getMenuInflater().inflate(R.menu.card_actions, menu);
-            return true;
+    private void removeCards() {
+        for (int i = 0; i < selectedCards.size(); i++) {
+            Card c = new Card();
+            c.id = selectedCards.get(i);
+            MainActivity.db.removeCard(c);
+            try {
+                MainActivity.db.editPage(MainActivity.allPagesList.get(pageId));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            //if (item.getItemId() == R.id.delete_card) {
-
-            return true;
-            //}
-            //else return false;
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            selectionMode = false;
-            selectedCards.clear();
-            notifyDataSetChanged();
-        }
-    };
+        notifyDataSetChanged();
+    }
 }
