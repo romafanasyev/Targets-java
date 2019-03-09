@@ -24,47 +24,6 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
     private PageAdapter pageAdapter = this;
     private String newPage; //when page title set to empty (do like that cuz need to access string resources)
 
-    public static class PageAdapterViewHolder extends RecyclerView.ViewHolder {
-        public TextView mTextView;
-        public ImageButton mButton;
-        public PopupMenu popupMenu;
-        public TextView mCategory;
-        public View mDivider;
-        public LinearLayout mLinearLayout;
-        public PageAdapterViewHolder(View v) {
-            super(v);
-            mTextView = v.findViewById(R.id.pagename);
-            mButton = v.findViewById(R.id.pageActionButton);
-            popupMenu = new PopupMenu(MainActivity.mainContext(), mButton);
-            popupMenu.getMenuInflater().inflate(R.menu.page, popupMenu.getMenu());
-
-            mButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    popupMenu.show();
-                }
-            });
-            mCategory = v.findViewById(R.id.category_title);
-            mDivider = v.findViewById(R.id.category_divider);
-
-            mLinearLayout = v.findViewById(R.id.show_cards);
-        }
-    }
-
-    public PageAdapter(ArrayList<Page> myDataset, String newPageTitle) {
-        mDataset = myDataset; newPage = newPageTitle;
-    }
-
-    // Create new views (invoked by the layout manager)
-    @Override
-    public PageAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // create a new view
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_page, parent, false);
-        PageAdapterViewHolder vh = new PageAdapterViewHolder(v);
-        return vh;
-    }
-
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final PageAdapterViewHolder holder, final int position) {
@@ -108,9 +67,9 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.change_title:
-                            AlertDialog.Builder titleBuilder = new AlertDialog.Builder(MainActivity.getActivityContext());
+                            AlertDialog.Builder titleBuilder = new AlertDialog.Builder(MainActivity.activityContext());
                             titleBuilder.setMessage(R.string.change_title);
-                            LayoutInflater inflater = LayoutInflater.from(MainActivity.getActivityContext());
+                            LayoutInflater inflater = LayoutInflater.from(MainActivity.activityContext());
                             View v = inflater.inflate(R.layout.change_page_title, null);
                             final EditText editText = v.findViewById(R.id.change_page_title);
                             editText.setText(MainActivity.allPagesList.get(position).title);
@@ -140,8 +99,8 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                             changeTitleDialog.show();
                             break;
                         case R.id.change_category:
-                            AlertDialog.Builder categoryBuilder = new AlertDialog.Builder(MainActivity.getActivityContext());
-                            LayoutInflater inflater2 = LayoutInflater.from(MainActivity.getActivityContext());
+                            AlertDialog.Builder categoryBuilder = new AlertDialog.Builder(MainActivity.activityContext());
+                            LayoutInflater inflater2 = LayoutInflater.from(MainActivity.activityContext());
                             View v2 = inflater2.inflate(R.layout.change_page_category, null);
                             final Switch sw = v2.findViewById(R.id.category_switch);
                             sw.setChecked(MainActivity.allPagesList.get(position).category);
@@ -171,7 +130,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                             categoryDialog.show();
                             break;
                         case R.id.delete:
-                            AlertDialog.Builder deleteBuilder = new AlertDialog.Builder(MainActivity.getActivityContext());
+                            AlertDialog.Builder deleteBuilder = new AlertDialog.Builder(MainActivity.activityContext());
                             deleteBuilder.setMessage(R.string.delete_message);
                             deleteBuilder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                 @Override
@@ -194,6 +153,49 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                     return true;
                 }
             });
+        }
+    }
+
+    public PageAdapter(ArrayList<Page> myDataset, String newPageTitle) {
+        mDataset = myDataset;
+        newPage = newPageTitle;
+    }
+
+    // Create new views (invoked by the layout manager)
+    @Override
+    public PageAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // create a new view
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_page, parent, false);
+        PageAdapterViewHolder vh = new PageAdapterViewHolder(v);
+        return vh;
+    }
+
+    public static class PageAdapterViewHolder extends RecyclerView.ViewHolder {
+        public TextView mTextView;
+        public ImageButton mButton;
+        public PopupMenu popupMenu;
+        public TextView mCategory;
+        public View mDivider;
+        public LinearLayout mLinearLayout;
+
+        public PageAdapterViewHolder(View v) {
+            super(v);
+            mTextView = v.findViewById(R.id.pagename);
+            mButton = v.findViewById(R.id.pageActionButton);
+            popupMenu = new PopupMenu(MainActivity.applicationContext(), mButton);
+            popupMenu.getMenuInflater().inflate(R.menu.page, popupMenu.getMenu());
+
+            mButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    popupMenu.show();
+                }
+            });
+            mCategory = v.findViewById(R.id.category_title);
+            mDivider = v.findViewById(R.id.category_divider);
+
+            mLinearLayout = v.findViewById(R.id.show_cards);
         }
     }
 

@@ -111,7 +111,7 @@ public class CardsFragment extends Fragment {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        mAdapter.notifyDataSetChanged();
+                        mAdapter.updateState();
                     }
                 });
                 builder.create().show();

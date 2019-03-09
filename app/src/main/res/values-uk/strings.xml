@@ -19,4 +19,6 @@
     <string name="categorize">Додати до категорії</string>
     <string name="category_title">Назва категорії (не обов\'язково)</string>
     <string name="selected"> обрано</string>
+    <string name="card_delete_message">Ви впевнені? Цю дію неможливо відмінити.</string>
+    <string name="no">Ні</string>
 </resources>

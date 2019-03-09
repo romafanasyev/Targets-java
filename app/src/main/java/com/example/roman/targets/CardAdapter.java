@@ -1,5 +1,7 @@
 package com.example.roman.targets;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -45,7 +47,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
     private ActionMode.Callback callback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mode.setTitle("1 " + MainActivity.getActivityContext().getResources().getString(R.string.selected));
+            mode.setTitle("1 " + MainActivity.activityContext().getResources().getString(R.string.selected));
             mode.getMenuInflater().inflate(R.menu.card_actions, menu);
             return true;
         }
@@ -58,7 +60,21 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             if (item.getItemId() == R.id.delete_card) {
-                removeCards();
+                AlertDialog.Builder deleteDialog = new AlertDialog.Builder(MainActivity.activityContext());
+                deleteDialog.setMessage(R.string.card_delete_message);
+                deleteDialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        removeCards();
+                    }
+                });
+                deleteDialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                });
+                deleteDialog.create().show();
                 return true;
             }
             return false;
@@ -99,8 +115,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
     public void onBindViewHolder(final CardAdapterViewHolder holder, final int position) {
         final Card currentCard = mDataset.get(position);
 
-        //all listeners:
-        // select card for editing
+        // select card
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,7 +123,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                     if (!selectedCards.contains(currentCard.id))
                         selectedCards.add(currentCard.id);
                     else selectedCards.remove(new Integer(currentCard.id));
-                    MainActivity.activity.actionMode.setTitle(selectedCards.size() + " " + MainActivity.getActivityContext().getResources().getString(R.string.selected));
+                    MainActivity.activity.actionMode.setTitle(selectedCards.size() + " " + MainActivity.activityContext().getResources().getString(R.string.selected));
 
                     if (!selectedCards.isEmpty()) notifyDataSetChanged();
                     else hideActions();
@@ -172,7 +187,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         if (selectedCards.contains(currentCard.id))
             holder.itemView.setBackgroundColor(Color.LTGRAY);
         else
-            holder.itemView.setBackgroundColor(MainActivity.getActivityContext().getResources().getColor(R.color.design_default_color_background));
+            holder.itemView.setBackgroundColor(MainActivity.activityContext().getResources().getColor(R.color.design_default_color_background));
 
         if (selectedCards.isEmpty())
             hideActions();
@@ -215,6 +230,12 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                 e.printStackTrace();
             }
         }
+        updateState();
+    }
+
+    public void updateState() {
+        mDataset = MainActivity.db.findPageCards(pageId);
         notifyDataSetChanged();
+        hideActions();
     }
 }

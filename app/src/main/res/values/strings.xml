@@ -18,4 +18,6 @@
     <string name="categorize">Add to category</string>
     <string name="category_title">Category title (not required)</string>
     <string name="selected"> selected</string>
+    <string name="card_delete_message">Are you sure? This action can not be undone.</string>
+    <string name="no">No</string>
 </resources>

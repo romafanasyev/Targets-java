@@ -2,20 +2,21 @@ package com.example.roman.targets;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import org.json.JSONException;
 
 import java.util.ArrayList;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
     public static DBHelper db;
@@ -141,10 +142,13 @@ public class MainActivity extends AppCompatActivity {
         actionMode = startActionMode(c);
     }
 
-    public static Context mainContext()
+    public static Context applicationContext()
     {
         return applicationContext;
     }
-    public static Context getActivityContext() { return activityContext; }
+
+    public static Context activityContext() {
+        return activityContext;
+    }
 }
 
