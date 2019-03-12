@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -67,7 +68,10 @@ public class CardsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_cards, container, false);
         mRecyclerView = view.findViewById(R.id.card_list);
         TextView title = view.findViewById(R.id.currentPageName);
-        title.setText(MainActivity.allPagesList.get(pageID).title);
+        String section = "";
+        if (pageID !=0)
+            section = MainActivity.allPagesList.get(pageID).section ? getResources().getString(R.string.title_personal) : getResources().getString(R.string.title_work);
+        title.setText(section + " \\ " + MainActivity.allPagesList.get(pageID).title);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -102,19 +106,23 @@ public class CardsFragment extends Fragment {
                 builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
-
-                        Card res = new Card(MainActivity.db.cardTableSize(), pageID, mTitle.getText().toString(), mText.getText().toString());
-                        MainActivity.db.addCard(res);
-                        MainActivity.allPagesList.get(pageID).cards.add(MainActivity.db.cardTableSize()-1);
-                        try {
-                            MainActivity.db.editPage(MainActivity.allPagesList.get(pageID));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        if (!mTitle.getText().toString().trim().isEmpty() || !mText.getText().toString().trim().isEmpty()) {
+                            Card res = new Card(MainActivity.db.cardTableSize(), pageID, mTitle.getText().toString(), mText.getText().toString());
+                            MainActivity.db.addCard(res);
+                            MainActivity.allPagesList.get(pageID).cards.add(MainActivity.db.cardTableSize() - 1);
+                            try {
+                                MainActivity.db.editPage(MainActivity.allPagesList.get(pageID));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            mAdapter.updateState();
                         }
-                        mAdapter.updateState();
                     }
                 });
-                builder.create().show();
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                mTitle.requestFocus();
+                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
         });
         return view;

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -78,7 +79,7 @@ public class WorkFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder addBuilder = new AlertDialog.Builder(getContext());
-                addBuilder.setMessage(R.string.add_page);
+                addBuilder.setMessage(R.string.add_page_personal);
                 LayoutInflater inflater = LayoutInflater.from(getContext());
                 View dialog = inflater.inflate(R.layout.add_dialog, null);
                 final EditText editText = dialog.findViewById(R.id.editPageName);
@@ -109,6 +110,8 @@ public class WorkFragment extends Fragment {
                 });
                 AlertDialog addDialog = addBuilder.create();
                 addDialog.show();
+                editText.requestFocus();
+                addDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
         });
         return view;

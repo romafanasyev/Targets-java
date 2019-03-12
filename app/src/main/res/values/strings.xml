@@ -4,8 +4,8 @@
     <string name="title_personal">Personal</string>
     <string name="title_work">Work</string>
     <string name="title_notifications">Notifications</string>
-    <string name="title_more">More</string>
-    <string name="add_page">+ Add page</string>
+    <string name="title_preferences">Preferences</string>
+    <string name="add_page_personal">+ Add page (Personal)</string>
     <string name="action_button_page">Actions with page</string>
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
@@ -20,4 +20,5 @@
     <string name="selected"> selected</string>
     <string name="card_delete_message">Are you sure? This action can not be undone.</string>
     <string name="no">No</string>
+    <string name="add_page_work">+ Add page (Work)</string>
 </resources>
