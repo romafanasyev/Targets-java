@@ -87,17 +87,12 @@ public class WorkFragment extends Fragment {
                 addBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            if (editText.getText().toString().equals("")) {
-                                MainActivity.allPagesList.add(MainActivity.allPagesList.size(), new Page(MainActivity.allPagesList.size(), getString(R.string.new_page), false));
-                                MainActivity.db.addPage(MainActivity.allPagesList.get(MainActivity.allPagesList.size() - 1));
-                            } else {
-                                MainActivity.allPagesList.add(new Page(MainActivity.allPagesList.size(), editText.getText().toString(), false));
-                                MainActivity.db.addPage(MainActivity.allPagesList.get(MainActivity.allPagesList.size() - 1));
-                            }
-                        } catch (JSONException e)
-                        {
-                            e.printStackTrace();
+                        if (editText.getText().toString().equals("")) {
+                            MainActivity.allPagesList.add(MainActivity.allPagesList.size(), new Page(MainActivity.allPagesList.size(), getString(R.string.new_page), false));
+                            MainActivity.db.addPage(MainActivity.allPagesList.get(MainActivity.allPagesList.size() - 1));
+                        } else {
+                            MainActivity.allPagesList.add(new Page(MainActivity.allPagesList.size(), editText.getText().toString(), false));
+                            MainActivity.db.addPage(MainActivity.allPagesList.get(MainActivity.allPagesList.size() - 1));
                         }
                         mAdapter.notifyDataSetChanged();
                     }

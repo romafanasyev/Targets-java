@@ -33,7 +33,7 @@ public class CardsFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PAGE_ID = "param1";
 
-    private int pageID;
+    public int pageID;
 
     private OnFragmentInteractionListener mListener;
 
@@ -77,54 +77,54 @@ public class CardsFragment extends Fragment {
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
-        // use a layout manager
-        mLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+            // use a layout manager
+            mLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+            mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new CardAdapter(pageID);
-        mRecyclerView.setAdapter(mAdapter);
+            mAdapter = new CardAdapter(pageID,false, 0);
+            mRecyclerView.setAdapter(mAdapter);
 
-        // add card button & dialog
-        FloatingActionButton button = view.findViewById(R.id.add_card);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                LayoutInflater inflater1 = getLayoutInflater();
-                View d = inflater1.inflate(R.layout.item_card, null);
-                d.findViewById(R.id.card_m_title).setVisibility(View.GONE);
-                d.findViewById(R.id.card_m_text).setVisibility(View.GONE);
-                final EditText mTitle = d.findViewById(R.id.card_title);
-                final EditText mText = d.findViewById(R.id.card_text);
-                builder.setView(d);
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+            // add card button & dialog
+            FloatingActionButton button = view.findViewById(R.id.add_card);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    LayoutInflater inflater1 = getLayoutInflater();
+                    View d = inflater1.inflate(R.layout.item_card, null);
+                    d.findViewById(R.id.card_m_title).setVisibility(View.GONE);
+                    d.findViewById(R.id.card_m_text).setVisibility(View.GONE);
+                    final EditText mTitle = d.findViewById(R.id.card_title);
+                    final EditText mText = d.findViewById(R.id.card_text);
+                    builder.setView(d);
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-                    }
-                });
-                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        if (!mTitle.getText().toString().trim().isEmpty() || !mText.getText().toString().trim().isEmpty()) {
-                            Card res = new Card(MainActivity.db.cardTableSize(), pageID, mTitle.getText().toString(), mText.getText().toString());
-                            MainActivity.db.addCard(res);
-                            MainActivity.allPagesList.get(pageID).cards.add(MainActivity.db.cardTableSize() - 1);
-                            try {
-                                MainActivity.db.editPage(MainActivity.allPagesList.get(pageID));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            mAdapter.updateState();
                         }
-                    }
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
-                mTitle.requestFocus();
-                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-            }
-        });
+                    });
+                    builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            if (!mTitle.getText().toString().trim().isEmpty() || !mText.getText().toString().trim().isEmpty()) {
+                                Card res = new Card(MainActivity.db.cardTableSize(), pageID, mTitle.getText().toString(), mText.getText().toString());
+                                MainActivity.db.addCard(res);
+                                MainActivity.allPagesList.get(pageID).cards.add(MainActivity.db.cardTableSize() - 1);
+                                try {
+                                    MainActivity.db.editPage(MainActivity.allPagesList.get(pageID));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                mAdapter.updateState();
+                            }
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                    mTitle.requestFocus();
+                    dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                }
+            });
         return view;
     }
 

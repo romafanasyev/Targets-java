@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         Main, Personal, Work, Notifications, More
     }
 
-    private static Section section;
+    public static Section section;
     private static Context applicationContext;
     private static Context activityContext;
     public static MainActivity activity;
@@ -49,26 +49,26 @@ public class MainActivity extends AppCompatActivity {
 
             switch (item.getItemId()) {
                 case R.id.navigation_main:
-                    navigate(mainFragment);
                     section = Section.Main;
+                    navigate(mainFragment);
                     return true;
                 case R.id.navigation_personal:
-                    navigate(personalFragment);
                     section = Section.Personal;
+                    navigate(personalFragment);
                     currentSection = true;
                     return true;
                 case R.id.navigation_work:
-                    navigate(workFragment);
                     section = Section.Work;
+                    navigate(workFragment);
                     currentSection = false;
                     return true;
                 case R.id.navigation_notifications:
-                    navigate(notificationsFragment);
                     section = Section.Notifications;
+                    navigate(notificationsFragment);
                     return true;
                 case R.id.navigation_more:
-                    navigate(moreFragment);
                     section = Section.More;
+                    navigate(moreFragment);
                     return true;
             }
             return false;
@@ -91,16 +91,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (allPagesList.isEmpty()) {
             allPagesList.add(new Page(0, "", true));
-            try {
-                db.addPage(MainActivity.allPagesList.get(0));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            db.addPage(MainActivity.allPagesList.get(0));
         }
         mainFragment = CardsFragment.newInstance(0);
 
-        navigate(mainFragment);
         section = Section.Main;
+        navigate(mainFragment);
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -125,6 +121,12 @@ public class MainActivity extends AppCompatActivity {
                     return false;
                 }
             }
+            if (currentFragment instanceof CardEditFragment)
+            {
+                int id = ((CardEditFragment) currentFragment).pageID;
+                navigate(CardsFragment.newInstance(id));
+                return false;
+            }
             return super.onKeyDown(keyCode, event);
         }
         return super.onKeyDown(keyCode, event);
@@ -135,6 +137,23 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         currentFragment = fragment;
+        switch (section){
+            case Main:
+                mainFragment = fragment;
+                break;
+            case Personal:
+                personalFragment = fragment;
+                break;
+            case Work:
+                workFragment = fragment;
+                break;
+            case Notifications:
+                notificationsFragment = fragment;
+                break;
+            case More:
+                moreFragment = fragment;
+                break;
+        }
         transaction.replace(R.id.navigation_content, fragment).commit();
     }
     public void showActionMode (ActionMode.Callback c)

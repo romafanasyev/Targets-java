@@ -19,6 +19,8 @@ import android.widget.EditText;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -87,18 +89,14 @@ public class PersonalFragment extends Fragment {
                 addBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            if (editText.getText().toString().equals("")) {
-                                MainActivity.allPagesList.add(new Page(MainActivity.allPagesList.size(), getString(R.string.new_page), true));
-                                MainActivity.db.addPage(MainActivity.allPagesList.get(MainActivity.allPagesList.size()-1));
-                            }
-                            else {
-                                MainActivity.allPagesList.add(new Page(MainActivity.allPagesList.size(), editText.getText().toString(), true));
-                                MainActivity.db.addPage(MainActivity.allPagesList.get(MainActivity.allPagesList.size()-1));
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        String input = editText.getText().toString();
+                        if (input.equals("")) {
+                            MainActivity.allPagesList.add(new Page(MainActivity.allPagesList.size(), getString(R.string.new_page), true));
                         }
+                        else {
+                            MainActivity.allPagesList.add(new Page(MainActivity.allPagesList.size(), input, true));
+                        }
+                        MainActivity.db.addPage(MainActivity.allPagesList.get(MainActivity.allPagesList.size()-1));
                         mAdapter.notifyDataSetChanged();
                     }
                 });

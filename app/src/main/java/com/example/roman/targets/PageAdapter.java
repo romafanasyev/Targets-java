@@ -54,10 +54,6 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                 @Override
                 public void onClick(View v) {
                     CardsFragment cardsFragment = CardsFragment.newInstance(MainActivity.allPagesList.get(position).id);
-                    if (MainActivity.currentSection)
-                        MainActivity.personalFragment = cardsFragment;
-                    else
-                        MainActivity.workFragment = cardsFragment;
                     MainActivity.activity.navigate(cardsFragment);
                 }
             });

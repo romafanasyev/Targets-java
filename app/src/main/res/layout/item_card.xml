@@ -47,5 +47,16 @@
             android:minLines="1"
             android:scrollbars="vertical"
             android:inputType="textCapSentences|textMultiLine"/>
+        <LinearLayout
+            android:id="@+id/edit_mode_menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+            <ImageButton
+                android:id="@+id/delete_card"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_delete_black_24dp"/>
+        </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

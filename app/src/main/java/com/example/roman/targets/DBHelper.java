@@ -71,7 +71,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert(CardsTable.TABLE_NAME, null, cv);
     }
 
-    public void addPage(Page page) throws JSONException {
+    public void addPage(Page page) {
         ContentValues cv = new ContentValues();
         cv.put(PagesTable.COLUMN_ID, page.id);
         cv.put(PagesTable.COLUMN_CATEGORY, page.getCategory());
@@ -80,7 +80,11 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(PagesTable.COLUMN_SECTION, page.section);
 
         JSONObject json = new JSONObject();
-        json.put("page_cards", new JSONArray(page.cards));
+        try {
+            json.put("page_cards", new JSONArray(page.cards));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         String putCards = json.toString();
         cv.put(PagesTable.COLUMN_CARDS, putCards);
 

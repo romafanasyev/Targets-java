@@ -1,15 +1,21 @@
 package com.example.roman.targets;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -17,10 +23,13 @@ import org.json.JSONException;
 import java.util.ArrayList;
 
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterViewHolder> {
     private int pageId;
+    private int selectedCardPosition;
+    private boolean editMode;
     private ArrayList<Card> mDataset;
     private boolean selectionMode = false;
     ArrayList<Integer> selectedCards = new ArrayList<>();
@@ -34,6 +43,10 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
 
         EditText title;
         EditText text;
+
+        LinearLayout cardMenu;
+        ImageButton deleteButton;
+
         public CardAdapterViewHolder(CardView v) {
             super(v);
             mTitle = v.findViewById(R.id.card_m_title);
@@ -41,6 +54,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
 
             title = v.findViewById(R.id.card_title);
             text = v.findViewById(R.id.card_text);
+
+            cardMenu = v.findViewById(R.id.edit_mode_menu);
+            deleteButton = v.findViewById(R.id.delete_card);
         }
     }
 
@@ -99,8 +115,10 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         return vh;
     }
 
-    public CardAdapter(int pageId) {
+    public CardAdapter(int pageId, boolean editMode, int selectedCardPosition) {
         this.pageId = pageId;
+        this.editMode = editMode;
+        this.selectedCardPosition = selectedCardPosition;
         mDataset = MainActivity.db.findPageCards(pageId);
     }
 
@@ -128,6 +146,10 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                     if (!selectedCards.isEmpty()) notifyDataSetChanged();
                     else hideActions();
                 }
+                else if (!editMode) {
+                    CardEditFragment editFragment = CardEditFragment.newInstance(pageId, position);
+                    MainActivity.activity.navigate(editFragment);
+                }
             }
         };
 
@@ -144,20 +166,42 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             }
         };
 
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-
-        /*
-        if (Card.editId == currentCard.id) {
+        if (editMode)
+        {
             holder.mTitle.setVisibility(View.GONE);
             holder.mText.setVisibility(View.GONE);
 
             holder.title.setText(currentCard.title);
             holder.text.setText(currentCard.text);
 
-            holder.title.setOnLongClickListener(longListener);
-            holder.text.setOnLongClickListener(longListener);
-
+            View.OnClickListener deleteListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder deleteDialog = new AlertDialog.Builder(MainActivity.activityContext());
+                    deleteDialog.setMessage(R.string.card_delete_message);
+                    deleteDialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Card c = new Card();
+                            c.id = mDataset.get(position).id;
+                            MainActivity.db.removeCard(c);
+                            try {
+                                MainActivity.db.editPage(MainActivity.allPagesList.get(pageId));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            updateState();
+                        }
+                    });
+                    deleteDialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // do nothing
+                        }
+                    });
+                    deleteDialog.create().show();
+                }
+            };
             // saving changes to cards
             TextWatcher textWatcher = new TextWatcher() {
                 @Override
@@ -179,10 +223,28 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             };
             holder.title.addTextChangedListener(textWatcher);
             holder.text.addTextChangedListener(textWatcher);
-        }
+            holder.deleteButton.setOnClickListener(deleteListener);
 
-        - need to rearrange in the fragment for card
-        */
+            if (position == selectedCardPosition) {
+                holder.text.requestFocus();
+                InputMethodManager imgr = (InputMethodManager) MainActivity.activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+            }
+        }
+        else {
+            holder.title.setVisibility(View.GONE);
+            holder.text.setVisibility(View.GONE);
+            holder.cardMenu.setVisibility(View.GONE);
+
+            holder.mTitle.setText(currentCard.title);
+            holder.mText.setText(currentCard.text);
+
+            holder.mTitle.setOnLongClickListener(longListener);
+            holder.mText.setOnLongClickListener(longListener);
+
+            holder.mTitle.setOnClickListener(clickListener);
+            holder.mText.setOnClickListener(clickListener);
+        }
 
         if (selectedCards.contains(currentCard.id))
             holder.itemView.setBackgroundColor(Color.LTGRAY);
@@ -191,19 +253,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
 
         if (selectedCards.isEmpty())
             hideActions();
-
-        //TODO: add conditions here
-        holder.title.setVisibility(View.GONE);
-        holder.text.setVisibility(View.GONE);
-
-        holder.mTitle.setText(currentCard.title);
-        holder.mText.setText(currentCard.text);
-
-        holder.mTitle.setOnLongClickListener(longListener);
-        holder.mText.setOnLongClickListener(longListener);
-
-        holder.mTitle.setOnClickListener(clickListener);
-        holder.mText.setOnClickListener(clickListener);
     }
 
     public void showActions()
