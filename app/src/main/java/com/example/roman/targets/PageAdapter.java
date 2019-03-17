@@ -2,10 +2,13 @@ package com.example.roman.targets;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -73,16 +76,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                             titleBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    if (editText.getText().toString().equals(""))
-                                        MainActivity.allPagesList.get(position).title = newPage;
-                                    else
-                                        MainActivity.allPagesList.get(position).title = editText.getText().toString();
-                                    try {
-                                        MainActivity.db.editPage(MainActivity.allPagesList.get(position));
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                    pageAdapter.notifyDataSetChanged();
+                                    changeTitle(editText, position);
                                 }
                             });
                             titleBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -91,8 +85,21 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                                     //do nothing
                                 }
                             });
-                            AlertDialog changeTitleDialog = titleBuilder.create();
+                            final AlertDialog changeTitleDialog = titleBuilder.create();
                             changeTitleDialog.show();
+                            editText.requestFocus();
+                            editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                                @Override
+                                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                                        changeTitle(editText, position);
+                                        changeTitleDialog.dismiss();
+                                        return true;
+                                    }
+                                    return false;
+                                }
+                            });
+                            changeTitleDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                             break;
                         case R.id.change_category:
                             AlertDialog.Builder categoryBuilder = new AlertDialog.Builder(MainActivity.activityContext());
@@ -106,14 +113,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                             categoryBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    MainActivity.allPagesList.get(position).category = sw.isChecked();
-                                    MainActivity.allPagesList.get(position).category_name = editText2.getText().toString();
-                                    try {
-                                        MainActivity.db.editPage(MainActivity.allPagesList.get(position));
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                    pageAdapter.notifyDataSetChanged();
+                                    changeCategory(editText2, sw, position);
                                 }
                             });
                             categoryBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -122,8 +122,21 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                                     //do nothing
                                 }
                             });
-                            AlertDialog categoryDialog = categoryBuilder.create();
+                            final AlertDialog categoryDialog = categoryBuilder.create();
                             categoryDialog.show();
+                            editText2.requestFocus();
+                            editText2.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                                @Override
+                                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                                        changeCategory(editText2, sw, position);
+                                        categoryDialog.dismiss();
+                                        return true;
+                                    }
+                                    return false;
+                                }
+                            });
+                            categoryDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                             break;
                         case R.id.delete:
                             AlertDialog.Builder deleteBuilder = new AlertDialog.Builder(MainActivity.activityContext());
@@ -163,6 +176,29 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                 }
             });
         }
+    }
+    private void changeTitle(EditText editText, int position)
+    {
+        if (editText.getText().toString().equals(""))
+            MainActivity.allPagesList.get(position).title = newPage;
+        else
+            MainActivity.allPagesList.get(position).title = editText.getText().toString();
+        try {
+            MainActivity.db.editPage(MainActivity.allPagesList.get(position));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        pageAdapter.notifyDataSetChanged();
+    }
+    private void changeCategory(EditText editText2, Switch sw, int position) {
+        MainActivity.allPagesList.get(position).category = sw.isChecked();
+        MainActivity.allPagesList.get(position).category_name = editText2.getText().toString();
+        try {
+            MainActivity.db.editPage(MainActivity.allPagesList.get(position));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        pageAdapter.notifyDataSetChanged();
     }
 
     public PageAdapter(ArrayList<Page> myDataset, String newPageTitle) {

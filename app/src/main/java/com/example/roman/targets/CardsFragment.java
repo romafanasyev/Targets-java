@@ -1,14 +1,17 @@
 package com.example.roman.targets;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -32,9 +35,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 public class CardsFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PAGE_ID = "param1";
-
     public int pageID;
-
     private OnFragmentInteractionListener mListener;
 
     public CardsFragment() {
@@ -94,6 +95,7 @@ public class CardsFragment extends Fragment {
                     View d = inflater1.inflate(R.layout.item_card, null);
                     d.findViewById(R.id.card_m_title).setVisibility(View.GONE);
                     d.findViewById(R.id.card_m_text).setVisibility(View.GONE);
+                    d.findViewById(R.id.delete_card).setVisibility(View.GONE);
                     final EditText mTitle = d.findViewById(R.id.card_title);
                     final EditText mText = d.findViewById(R.id.card_text);
                     builder.setView(d);

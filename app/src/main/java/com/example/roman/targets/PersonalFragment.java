@@ -10,12 +10,15 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import org.json.JSONException;
 
@@ -80,7 +83,7 @@ public class PersonalFragment extends Fragment {
         add_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder addBuilder = new AlertDialog.Builder(getContext());
+                final AlertDialog.Builder addBuilder = new AlertDialog.Builder(getContext());
                 addBuilder.setMessage(R.string.add_page_personal);
                 LayoutInflater inflater = LayoutInflater.from(getContext());
                 View dialog = inflater.inflate(R.layout.add_dialog, null);
@@ -89,15 +92,7 @@ public class PersonalFragment extends Fragment {
                 addBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String input = editText.getText().toString();
-                        if (input.equals("")) {
-                            MainActivity.allPagesList.add(new Page(MainActivity.allPagesList.size(), getString(R.string.new_page), true));
-                        }
-                        else {
-                            MainActivity.allPagesList.add(new Page(MainActivity.allPagesList.size(), input, true));
-                        }
-                        MainActivity.db.addPage(MainActivity.allPagesList.get(MainActivity.allPagesList.size()-1));
-                        mAdapter.notifyDataSetChanged();
+                        addPage(editText);
                     }
                 });
                 addBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -106,13 +101,36 @@ public class PersonalFragment extends Fragment {
                         // do nothing
                     }
                 });
-                AlertDialog addDialog = addBuilder.create();
+                final AlertDialog addDialog = addBuilder.create();
                 addDialog.show();
                 editText.requestFocus();
+                editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                            addPage(editText);
+                            addDialog.dismiss();
+                            return true;
+                        }
+                        return false;
+                    }
+                });
                 addDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
         });
         return view;
+    }
+
+    private void addPage(EditText editText) {
+        String input = editText.getText().toString();
+        if (input.equals("")) {
+            MainActivity.allPagesList.add(new Page(MainActivity.allPagesList.size(), getString(R.string.new_page), true));
+        }
+        else {
+            MainActivity.allPagesList.add(new Page(MainActivity.allPagesList.size(), input, true));
+        }
+        MainActivity.db.addPage(MainActivity.allPagesList.get(MainActivity.allPagesList.size()-1));
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
