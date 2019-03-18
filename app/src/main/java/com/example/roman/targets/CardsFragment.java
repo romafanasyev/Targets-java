@@ -20,6 +20,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.json.JSONException;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -32,7 +33,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
  * Use the {@link CardsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CardsFragment extends Fragment {
+public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.AnimationListener {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PAGE_ID = "param1";
     public int pageID;
@@ -59,7 +60,7 @@ public class CardsFragment extends Fragment {
     }
 
     RecyclerView mRecyclerView;
-    CardAdapter mAdapter;
+    public CardAdapter mAdapter;
     RecyclerView.LayoutManager mLayoutManager;
 
     @Override
@@ -84,6 +85,8 @@ public class CardsFragment extends Fragment {
 
             mAdapter = new CardAdapter(pageID,false, 0);
             mRecyclerView.setAdapter(mAdapter);
+
+            new ItemTouchHelper(new RecyclerNameTouchHelper(this)).attachToRecyclerView(mRecyclerView);
 
             // add card button & dialog
             FloatingActionButton button = view.findViewById(R.id.add_card);
@@ -151,6 +154,15 @@ public class CardsFragment extends Fragment {
         mListener = null;
         mAdapter.hideActions();
         mAdapter.selectedCards.clear();
+    }
+
+    @Override
+    public void onMove(int fromPos, int toPos) {
+
+        if (!mAdapter.editMode) {
+            mAdapter.mDataset.add(toPos, mAdapter.mDataset.remove(fromPos));
+            mAdapter.notifyItemMoved(fromPos, toPos);
+        }
     }
 
     /**

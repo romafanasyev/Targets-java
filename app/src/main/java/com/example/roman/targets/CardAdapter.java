@@ -29,8 +29,12 @@ import androidx.recyclerview.widget.RecyclerView;
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterViewHolder> {
     private int pageId;
     private int selectedCardPosition;
-    private boolean editMode;
-    private ArrayList<Card> mDataset;
+    public boolean editMode;
+
+    private static boolean staticEditMode;
+    private static ArrayList<Card> staticDataSet;
+
+    public ArrayList<Card> mDataset;
     private boolean selectionMode = false;
     ArrayList<Integer> selectedCards = new ArrayList<>();
 
@@ -120,6 +124,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         this.editMode = editMode;
         this.selectedCardPosition = selectedCardPosition;
         mDataset = MainActivity.db.findPageCards(pageId);
+
+        staticEditMode = editMode;
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -133,6 +139,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
     public void onBindViewHolder(final CardAdapterViewHolder holder, final int position) {
         final Card currentCard = mDataset.get(position);
 
+        staticDataSet = mDataset;
         // select card
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override

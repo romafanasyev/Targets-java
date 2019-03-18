@@ -107,7 +107,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public ArrayList<Card> findPageCards(int pageId) {
         ArrayList<Card> list = new ArrayList<>();
-        Cursor c = db.rawQuery("SELECT * FROM " + CardsTable.TABLE_NAME + " WHERE " + CardsTable.COLUMN_PAGE_ID + "=?", new String[]{Integer.toString(pageId)});
+        Cursor c = db.rawQuery("SELECT * FROM " + CardsTable.TABLE_NAME + " WHERE " + CardsTable.COLUMN_PAGE_ID + "=?", new String[]{pageId+""});
         if (c.moveToFirst()) {
             do {
                 Card card = new Card();
@@ -116,8 +116,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 card.title = c.getString(c.getColumnIndex(CardsTable.COLUMN_TITLE));
                 card.text = c.getString(c.getColumnIndex(CardsTable.COLUMN_TEXT));
                 list.add(card);
-            }
-            while (c.moveToNext());
+            } while (c.moveToNext());
         }
         c.close();
         return list;
