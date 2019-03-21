@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterViewHolder> {
+    private boolean section;
     private ArrayList<Page> mDataset;
     private PageAdapter pageAdapter = this;
     private String newPage; //when page title set to empty (do like that cuz need to access string resources)
@@ -171,6 +173,9 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                             AlertDialog deleteDialog = deleteBuilder.create();
                             deleteDialog.show();
                             break;
+                        case R.id.menu_move_to:
+                            // TODO: insert code here
+                            break;
                     }
                     return true;
                 }
@@ -201,9 +206,10 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
         pageAdapter.notifyDataSetChanged();
     }
 
-    public PageAdapter(ArrayList<Page> myDataset, String newPageTitle) {
+    public PageAdapter(ArrayList<Page> myDataset, String newPageTitle, boolean isPersonal) {
         mDataset = myDataset;
         newPage = newPageTitle;
+        section = isPersonal;
     }
 
     // Create new views (invoked by the layout manager)
@@ -212,7 +218,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_page, parent, false);
-        PageAdapterViewHolder vh = new PageAdapterViewHolder(v);
+        PageAdapterViewHolder vh = new PageAdapterViewHolder(v, section);
         return vh;
     }
 
@@ -224,12 +230,13 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
         public View mDivider;
         public LinearLayout mLinearLayout;
 
-        public PageAdapterViewHolder(View v) {
+        public PageAdapterViewHolder(View v, boolean section) {
             super(v);
             mTextView = v.findViewById(R.id.pagename);
             mButton = v.findViewById(R.id.pageActionButton);
             popupMenu = new PopupMenu(MainActivity.applicationContext(), mButton);
             popupMenu.getMenuInflater().inflate(R.menu.page, popupMenu.getMenu());
+            popupMenu.getMenu().getItem(2).setTitle(MainActivity.activity.getResources().getString(R.string.move_to) + " " + (section ? MainActivity.activity.getResources().getString(R.string.title_work) : MainActivity.activity.getResources().getString(R.string.title_personal)));
 
             mButton.setOnClickListener(new View.OnClickListener() {
                 @Override

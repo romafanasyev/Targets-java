@@ -22,4 +22,6 @@
     <string name="card_delete_message">Ви впевнені? Цю дію неможливо відмінити.</string>
     <string name="no">Ні</string>
     <string name="add_page_work">+ Додати сторінку (Робота)</string>
+    <string name="hello_blank_fragment">Якась странна фігня</string>
+    <string name="move_to">Перемістити до</string>
 </resources>

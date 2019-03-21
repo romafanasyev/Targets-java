@@ -75,7 +75,7 @@ public class PersonalFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter
-        mAdapter = new PageAdapter(MainActivity.allPagesList, getString(R.string.new_page));
+        mAdapter = new PageAdapter(MainActivity.allPagesList, getString(R.string.new_page), true);
         mRecyclerView.setAdapter(mAdapter);
 
         add_button = view.findViewById(R.id.add_page_button);

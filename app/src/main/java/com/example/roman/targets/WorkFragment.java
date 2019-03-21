@@ -70,7 +70,7 @@ public class WorkFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new PageAdapter(MainActivity.allPagesList, getString(R.string.new_page));
+        mAdapter = new PageAdapter(MainActivity.allPagesList, getString(R.string.new_page),false);
         mRecyclerView.setAdapter(mAdapter);
 
         add_button = view.findViewById(R.id.add_page_button);
