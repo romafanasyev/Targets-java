@@ -108,7 +108,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<Card> findPageCards(int pageId) {
         ArrayList<Card> list = new ArrayList<>();
         Cursor c = db.rawQuery("SELECT * FROM " + CardsTable.TABLE_NAME + " WHERE " + CardsTable.COLUMN_PAGE_ID + "=?", new String[]{pageId+""});
-        if (c.moveToFirst()) {
+        if (c.moveToFirst() && cardTableSize() > 0) {
             do {
                 Card card = new Card();
                 card.id = c.getInt(c.getColumnIndex(CardsTable.COLUMN_ID));
