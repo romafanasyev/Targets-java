@@ -89,8 +89,8 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
             new ItemTouchHelper(new RecyclerNameTouchHelper(this)).attachToRecyclerView(mRecyclerView);
 
             // add card button & dialog
-            FloatingActionButton button = view.findViewById(R.id.add_card);
-            button.setOnClickListener(new View.OnClickListener() {
+            FloatingActionButton add_button = view.findViewById(R.id.add_card);
+            add_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
