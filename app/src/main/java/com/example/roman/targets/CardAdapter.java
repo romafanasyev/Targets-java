@@ -1,6 +1,7 @@
 package com.example.roman.targets;
 
 import android.app.AlertDialog;
+import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -228,8 +229,21 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                     MainActivity.db.editCard(currentCard);
                 }
             };
+            // changing view size on focus
+            View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus)
+                        holder.text.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                Math.round(MainActivity.activityContext().getResources().getDisplayMetrics().heightPixels * 0.7f)));
+                    else holder.text.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT));
+                }
+            };
+
             holder.title.addTextChangedListener(textWatcher);
             holder.text.addTextChangedListener(textWatcher);
+            holder.text.setOnFocusChangeListener(focusListener);
             holder.deleteButton.setOnClickListener(deleteListener);
 
             if (position == selectedCardPosition) {
