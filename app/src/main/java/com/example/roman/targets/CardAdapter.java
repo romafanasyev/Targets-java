@@ -227,11 +227,20 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus)
+                    if (hasFocus) {
+                        int height = Math.round(MainActivity.activityContext().getResources().getDisplayMetrics().heightPixels * 0.7f);
+                        if (holder.text.getHeight() < height)
+                            holder.text.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
+                        CardEditFragment fragment = (CardEditFragment)MainActivity.activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
+                        fragment.mRecyclerView.scrollToPosition(position);
+                    }
+                    else {
                         holder.text.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                                Math.round(MainActivity.activityContext().getResources().getDisplayMetrics().heightPixels * 0.7f)));
-                    else holder.text.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT));
+                                ViewGroup.LayoutParams.WRAP_CONTENT));
+                        // hide keyboard
+                        InputMethodManager imm = (InputMethodManager)MainActivity.activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    }
                 }
             };
 

@@ -50,7 +50,7 @@ public class CardEditFragment extends Fragment {
         }
     }
 
-    RecyclerView mRecyclerView;
+    public RecyclerView mRecyclerView;
     CardAdapter mAdapter;
     RecyclerView.LayoutManager mLayoutManager;
 
