@@ -175,6 +175,29 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                             break;
                         case R.id.menu_move_to:
                             // TODO: insert code here
+                            AlertDialog.Builder sectionBuilder = new AlertDialog.Builder(MainActivity.activityContext());
+
+                            sectionBuilder.setMessage(R.string.move_to);
+
+
+                            sectionBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    changePosition(position);
+                                }
+                            });
+                            sectionBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //do nothing
+                                }
+                            });
+                            final AlertDialog sectionBuilderDialog = sectionBuilder.create();
+                            sectionBuilderDialog.show();
+
+
+                            sectionBuilderDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
                             break;
                     }
                     return true;
@@ -198,6 +221,16 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
     private void changeCategory(EditText editText2, Switch sw, int position) {
         MainActivity.allPagesList.get(position).category = sw.isChecked();
         MainActivity.allPagesList.get(position).category_name = editText2.getText().toString();
+        try {
+            MainActivity.db.editPage(MainActivity.allPagesList.get(position));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        pageAdapter.notifyDataSetChanged();
+    }
+    private void changePosition(int position) {
+        MainActivity.allPagesList.get(position).section = !MainActivity.currentSection;
+
         try {
             MainActivity.db.editPage(MainActivity.allPagesList.get(position));
         } catch (JSONException e) {
