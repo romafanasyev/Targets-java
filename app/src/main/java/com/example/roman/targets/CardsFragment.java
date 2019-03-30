@@ -61,7 +61,7 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
 
     RecyclerView mRecyclerView;
     public CardAdapter mAdapter;
-    RecyclerView.LayoutManager mLayoutManager;
+    StaggeredGridLayoutManager mLayoutManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

@@ -48,7 +48,7 @@ public class WorkFragment extends Fragment {
     //my code
     public RecyclerView mRecyclerView;
     public RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private LinearLayoutManager mLayoutManager;
     private Button add_button;
 
     @Override
@@ -66,10 +66,11 @@ public class WorkFragment extends Fragment {
 
         // use this setting(false) to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(false);
+        mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(getContext());
+        mLayoutManager.setSmoothScrollbarEnabled(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)

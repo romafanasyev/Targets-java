@@ -10,7 +10,7 @@
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
     <string name="title">Title</string>
-    <string name="change_title">Change title</string>
+    <string name="change_title">Rename</string>
     <string name="category">Category...</string>
     <string name="delete">Delete</string>
     <string name="new_page">New page</string>

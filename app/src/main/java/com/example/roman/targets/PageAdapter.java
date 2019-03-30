@@ -79,6 +79,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     changeTitle(editText, position);
+                                    pageAdapter.notifyDataSetChanged();
                                 }
                             });
                             titleBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -96,6 +97,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                                         changeTitle(editText, position);
                                         changeTitleDialog.dismiss();
+                                        pageAdapter.notifyDataSetChanged();
                                         return true;
                                     }
                                     return false;
@@ -116,6 +118,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     changeCategory(editText2, sw, position);
+                                    pageAdapter.notifyDataSetChanged();
                                 }
                             });
                             categoryBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -133,6 +136,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                                         changeCategory(editText2, sw, position);
                                         categoryDialog.dismiss();
+                                        pageAdapter.notifyDataSetChanged();
                                         return true;
                                     }
                                     return false;
@@ -174,7 +178,8 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                             deleteDialog.show();
                             break;
                         case R.id.menu_move_to:
-                            // TODO: insert code here
+                            changeSection(position);
+                            notifyDataSetChanged();
                             break;
                     }
                     return true;
@@ -193,7 +198,6 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        pageAdapter.notifyDataSetChanged();
     }
     private void changeCategory(EditText editText2, Switch sw, int position) {
         MainActivity.allPagesList.get(position).category = sw.isChecked();
@@ -203,7 +207,15 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        pageAdapter.notifyDataSetChanged();
+    }
+    private void changeSection(int position) {
+        MainActivity.allPagesList.get(position).section = !MainActivity.currentSection;
+
+        try {
+            MainActivity.db.editPage(MainActivity.allPagesList.get(position));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public PageAdapter(ArrayList<Page> myDataset, String newPageTitle, boolean isPersonal) {
