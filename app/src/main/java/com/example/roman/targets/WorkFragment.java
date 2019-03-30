@@ -70,7 +70,6 @@ public class WorkFragment extends Fragment {
 
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(getContext());
-        mLayoutManager.setSmoothScrollbarEnabled(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)

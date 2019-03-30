@@ -1,3 +1,4 @@
+
 package com.example.roman.targets;
 
 import android.app.AlertDialog;
@@ -13,7 +14,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
-import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -79,7 +79,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     changeTitle(editText, position);
-                                    pageAdapter.notifyDataSetChanged();
+                                    notifyDataSetChanged();
                                 }
                             });
                             titleBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -97,7 +97,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                                         changeTitle(editText, position);
                                         changeTitleDialog.dismiss();
-                                        pageAdapter.notifyDataSetChanged();
+                                        notifyDataSetChanged();
                                         return true;
                                     }
                                     return false;
@@ -118,7 +118,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     changeCategory(editText2, sw, position);
-                                    pageAdapter.notifyDataSetChanged();
+                                    notifyDataSetChanged();
                                 }
                             });
                             categoryBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -136,7 +136,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                                         changeCategory(editText2, sw, position);
                                         categoryDialog.dismiss();
-                                        pageAdapter.notifyDataSetChanged();
+                                        notifyDataSetChanged();
                                         return true;
                                     }
                                     return false;

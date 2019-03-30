@@ -4,21 +4,38 @@
     android:layout_height="match_parent"
     android:layout_gravity="center_vertical">
 
+    <ImageButton
+        android:id="@+id/drag_button"
+        android:layout_width="15dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_drag_button_black_24dp"
+        style="?android:attr/borderlessButtonStyle" />
+
     <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/point_check"
         android:layout_width="wrap_content"
         android:layout_height="match_parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/point_text_viev"
-        android:layout_width="match_parent"
+        android:id="@+id/point_text_view"
+        android:layout_weight="4"
+        android:layout_width="0dp"
         android:layout_height="wrap_content" />
 
     <EditText
         android:id="@+id/point_edit_text"
-        android:layout_width="match_parent"
+        android:layout_weight="4"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:inputType="textCapSentences"
-        android:maxLines="1" />
+        android:maxLines="1"
+        android:visibility="gone"/>
+
+    <ImageButton
+        android:id="@+id/backspace"
+        android:layout_width="35dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_backspace_black_24dp"
+        style="?android:attr/borderlessButtonStyle" />
 
 </LinearLayout>

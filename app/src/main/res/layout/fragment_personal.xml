@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_margin="0dp"
-            android:padding="0dp"
+            android:scrollbars="vertical"
             app:layout_constraintBottom_toTopOf="@+id/add_page_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
