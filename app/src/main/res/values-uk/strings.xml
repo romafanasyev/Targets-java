@@ -11,7 +11,7 @@
     <string name="yes">Так</string>
     <string name="cancel">Відміна</string>
     <string name="title">Назва</string>
-    <string name="change_title">Змінити назву</string>
+    <string name="change_title">Перейменувати</string>
     <string name="category">Категорія…</string>
     <string name="delete">Видалити</string>
     <string name="new_page">Нова сторінка</string>
@@ -22,4 +22,15 @@
     <string name="card_delete_message">Ви впевнені? Цю дію неможливо відмінити.</string>
     <string name="no">Ні</string>
     <string name="add_page_work">+ Додати сторінку (Робота)</string>
+    <string name="hello_blank_fragment">Якась странна фігня</string>
+    <string name="move_to">Перемістити до</string>
+    <string name="icon">Зображення</string>
+    <string name="add_point">Додати пункт…</string>
+
+    <string-array name="card_types">
+        <item>Нотатка</item>
+        <item>Список</item>
+        <item>Дедлайн</item>
+        <item>Питання</item>
+    </string-array>
 </resources>

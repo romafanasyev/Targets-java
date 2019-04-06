@@ -20,10 +20,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.json.JSONException;
-
-import java.util.ArrayList;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,7 +46,7 @@ public class PersonalFragment extends Fragment {
         //my code
     public RecyclerView mRecyclerView;
     public RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private LinearLayoutManager mLayoutManager;
     private Button add_button;
 
     @Override
@@ -68,14 +64,14 @@ public class PersonalFragment extends Fragment {
 
         // use this setting(false) to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(false);
+        mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter
-        mAdapter = new PageAdapter(MainActivity.allPagesList, getString(R.string.new_page));
+        mAdapter = new PageAdapter(MainActivity.allPagesList, getString(R.string.new_page), true);
         mRecyclerView.setAdapter(mAdapter);
 
         add_button = view.findViewById(R.id.add_page_button);
@@ -86,7 +82,7 @@ public class PersonalFragment extends Fragment {
                 final AlertDialog.Builder addBuilder = new AlertDialog.Builder(getContext());
                 addBuilder.setMessage(R.string.add_page_personal);
                 LayoutInflater inflater = LayoutInflater.from(getContext());
-                View dialog = inflater.inflate(R.layout.add_dialog, null);
+                View dialog = inflater.inflate(R.layout.add_page_dialog, null);
                 final EditText editText = dialog.findViewById(R.id.editPageName);
                 addBuilder.setView(dialog);
                 addBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {

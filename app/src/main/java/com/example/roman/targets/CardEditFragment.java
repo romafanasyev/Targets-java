@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -20,6 +22,8 @@ public class CardEditFragment extends Fragment {
 
     public int pageID;
     private int cardPosition;
+
+    FloatingActionButton actionButton;
 
     private OnFragmentInteractionListener mListener;
 
@@ -46,7 +50,7 @@ public class CardEditFragment extends Fragment {
         }
     }
 
-    RecyclerView mRecyclerView;
+    public RecyclerView mRecyclerView;
     CardAdapter mAdapter;
     RecyclerView.LayoutManager mLayoutManager;
 
@@ -71,6 +75,9 @@ public class CardEditFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new CardAdapter(pageID, true, cardPosition);
         mRecyclerView.setAdapter(mAdapter);
+
+        actionButton = view.findViewById(R.id.add_card);
+        actionButton.setVisibility(View.GONE);
 
         mRecyclerView.scrollToPosition(cardPosition);
 

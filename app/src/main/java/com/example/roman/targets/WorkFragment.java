@@ -10,14 +10,15 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-
-import org.json.JSONException;
+import android.widget.TextView;
 
 
 /**
@@ -45,7 +46,7 @@ public class WorkFragment extends Fragment {
     //my code
     public RecyclerView mRecyclerView;
     public RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private LinearLayoutManager mLayoutManager;
     private Button add_button;
 
     @Override
@@ -63,14 +64,14 @@ public class WorkFragment extends Fragment {
 
         // use this setting(false) to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(false);
+        mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new PageAdapter(MainActivity.allPagesList, getString(R.string.new_page));
+        mAdapter = new PageAdapter(MainActivity.allPagesList, getString(R.string.new_page),false);
         mRecyclerView.setAdapter(mAdapter);
 
         add_button = view.findViewById(R.id.add_page_button);
@@ -81,7 +82,7 @@ public class WorkFragment extends Fragment {
                 AlertDialog.Builder addBuilder = new AlertDialog.Builder(getContext());
                 addBuilder.setMessage(R.string.add_page_personal);
                 LayoutInflater inflater = LayoutInflater.from(getContext());
-                View dialog = inflater.inflate(R.layout.add_dialog, null);
+                View dialog = inflater.inflate(R.layout.add_page_dialog, null);
                 final EditText editText = dialog.findViewById(R.id.editPageName);
                 addBuilder.setView(dialog);
                 addBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -103,13 +104,36 @@ public class WorkFragment extends Fragment {
                         // do nothing
                     }
                 });
-                AlertDialog addDialog = addBuilder.create();
+                final AlertDialog addDialog = addBuilder.create();
                 addDialog.show();
                 editText.requestFocus();
+                editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                            addPage(editText);
+                            addDialog.dismiss();
+                            return true;
+                        }
+                        return false;
+                    }
+                });
                 addDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
         });
         return view;
+    }
+
+    private void addPage(EditText editText) {
+        String input = editText.getText().toString();
+        if (input.equals("")) {
+            MainActivity.allPagesList.add(new Page(MainActivity.allPagesList.size(), getString(R.string.new_page), false));
+        }
+        else {
+            MainActivity.allPagesList.add(new Page(MainActivity.allPagesList.size(), input, false));
+        }
+        MainActivity.db.addPage(MainActivity.allPagesList.get(MainActivity.allPagesList.size()-1));
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override

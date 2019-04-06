@@ -23,14 +23,14 @@ import org.json.JSONException;
 import java.util.ArrayList;
 
 import androidx.cardview.widget.CardView;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterViewHolder> {
     private int pageId;
     private int selectedCardPosition;
-    private boolean editMode;
-    private ArrayList<Card> mDataset;
+    public boolean editMode;
+
+    public ArrayList<Card> mDataset;
     private boolean selectionMode = false;
     ArrayList<Integer> selectedCards = new ArrayList<>();
 
@@ -110,7 +110,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                                                                 int viewType) {
         // create a new view
         CardView v = (CardView) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_card, parent, false);
+                .inflate(R.layout.item_card_note, parent, false);
         CardAdapterViewHolder vh = new CardAdapterViewHolder(v);
         return vh;
     }
@@ -132,6 +132,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
     @Override
     public void onBindViewHolder(final CardAdapterViewHolder holder, final int position) {
         final Card currentCard = mDataset.get(position);
+        holder.cardMenu.setVisibility(View.GONE);
 
         // select card
         View.OnClickListener clickListener = new View.OnClickListener() {
@@ -185,11 +186,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                             Card c = new Card();
                             c.id = mDataset.get(position).id;
                             MainActivity.db.removeCard(c);
-                            try {
-                                MainActivity.db.editPage(MainActivity.allPagesList.get(pageId));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                            MainActivity.db.editPage(MainActivity.allPagesList.get(pageId));
                             updateState();
                         }
                     });
@@ -221,8 +218,33 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                     MainActivity.db.editCard(currentCard);
                 }
             };
+            // changing view size on focus
+            View.OnFocusChangeListener textFocusListener = new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus) {
+                        int height = Math.round(MainActivity.activityContext().getResources().getDisplayMetrics().heightPixels * 0.7f);
+                        if (holder.text.getHeight() < height)
+                            holder.text.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
+                        CardEditFragment fragment = (CardEditFragment)MainActivity.activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
+                        fragment.mRecyclerView.scrollToPosition(position);
+                        holder.cardMenu.setVisibility(View.VISIBLE);
+                    }
+                    else {
+                        holder.text.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT));
+                        // hide keyboard
+                        InputMethodManager imm = (InputMethodManager)MainActivity.activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                        holder.cardMenu.setVisibility(View.GONE);
+                    }
+                }
+            };
+
             holder.title.addTextChangedListener(textWatcher);
+            holder.title.setOnFocusChangeListener(textFocusListener);
             holder.text.addTextChangedListener(textWatcher);
+            holder.text.setOnFocusChangeListener(textFocusListener);
             holder.deleteButton.setOnClickListener(deleteListener);
 
             if (position == selectedCardPosition) {
@@ -273,11 +295,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             Card c = new Card();
             c.id = selectedCards.get(i);
             MainActivity.db.removeCard(c);
-            try {
-                MainActivity.db.editPage(MainActivity.allPagesList.get(pageId));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            MainActivity.db.editPage(MainActivity.allPagesList.get(pageId));
         }
         updateState();
     }

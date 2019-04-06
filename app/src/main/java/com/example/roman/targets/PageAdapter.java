@@ -1,3 +1,4 @@
+
 package com.example.roman.targets;
 
 import android.app.AlertDialog;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterViewHolder> {
+    private boolean section;
     private ArrayList<Page> mDataset;
     private PageAdapter pageAdapter = this;
     private String newPage; //when page title set to empty (do like that cuz need to access string resources)
@@ -77,6 +79,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     changeTitle(editText, position);
+                                    notifyDataSetChanged();
                                 }
                             });
                             titleBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -94,6 +97,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                                         changeTitle(editText, position);
                                         changeTitleDialog.dismiss();
+                                        notifyDataSetChanged();
                                         return true;
                                     }
                                     return false;
@@ -114,6 +118,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     changeCategory(editText2, sw, position);
+                                    notifyDataSetChanged();
                                 }
                             });
                             categoryBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -131,6 +136,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                                         changeCategory(editText2, sw, position);
                                         categoryDialog.dismiss();
+                                        notifyDataSetChanged();
                                         return true;
                                     }
                                     return false;
@@ -149,11 +155,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                                         Card c = new Card();
                                         c.id = pageCards.get(i).id;
                                         MainActivity.db.removeCard(c);
-                                        try {
-                                            MainActivity.db.editPage(MainActivity.allPagesList.get(MainActivity.allPagesList.get(position).id));
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
+                                        MainActivity.db.editPage(MainActivity.allPagesList.get(MainActivity.allPagesList.get(position).id));
                                     }
 
                                     MainActivity.db.removePage(MainActivity.allPagesList.get(holder.getAdapterPosition()));
@@ -171,6 +173,10 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                             AlertDialog deleteDialog = deleteBuilder.create();
                             deleteDialog.show();
                             break;
+                        case R.id.menu_move_to:
+                            changeSection(position);
+                            notifyDataSetChanged();
+                            break;
                     }
                     return true;
                 }
@@ -183,27 +189,22 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
             MainActivity.allPagesList.get(position).title = newPage;
         else
             MainActivity.allPagesList.get(position).title = editText.getText().toString();
-        try {
-            MainActivity.db.editPage(MainActivity.allPagesList.get(position));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        pageAdapter.notifyDataSetChanged();
+        MainActivity.db.editPage(MainActivity.allPagesList.get(position));
     }
     private void changeCategory(EditText editText2, Switch sw, int position) {
         MainActivity.allPagesList.get(position).category = sw.isChecked();
         MainActivity.allPagesList.get(position).category_name = editText2.getText().toString();
-        try {
-            MainActivity.db.editPage(MainActivity.allPagesList.get(position));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        pageAdapter.notifyDataSetChanged();
+        MainActivity.db.editPage(MainActivity.allPagesList.get(position));
+    }
+    private void changeSection(int position) {
+        MainActivity.allPagesList.get(position).section = !MainActivity.currentSection;
+        MainActivity.db.editPage(MainActivity.allPagesList.get(position));
     }
 
-    public PageAdapter(ArrayList<Page> myDataset, String newPageTitle) {
+    public PageAdapter(ArrayList<Page> myDataset, String newPageTitle, boolean isPersonal) {
         mDataset = myDataset;
         newPage = newPageTitle;
+        section = isPersonal;
     }
 
     // Create new views (invoked by the layout manager)
@@ -212,7 +213,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_page, parent, false);
-        PageAdapterViewHolder vh = new PageAdapterViewHolder(v);
+        PageAdapterViewHolder vh = new PageAdapterViewHolder(v, section);
         return vh;
     }
 
@@ -224,12 +225,13 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
         public View mDivider;
         public LinearLayout mLinearLayout;
 
-        public PageAdapterViewHolder(View v) {
+        public PageAdapterViewHolder(View v, boolean section) {
             super(v);
             mTextView = v.findViewById(R.id.pagename);
             mButton = v.findViewById(R.id.pageActionButton);
             popupMenu = new PopupMenu(MainActivity.applicationContext(), mButton);
             popupMenu.getMenuInflater().inflate(R.menu.page, popupMenu.getMenu());
+            popupMenu.getMenu().getItem(2).setTitle(MainActivity.activity.getResources().getString(R.string.move_to) + " " + (section ? MainActivity.activity.getResources().getString(R.string.title_work) : MainActivity.activity.getResources().getString(R.string.title_personal)));
 
             mButton.setOnClickListener(new View.OnClickListener() {
                 @Override
