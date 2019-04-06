@@ -155,11 +155,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                                         Card c = new Card();
                                         c.id = pageCards.get(i).id;
                                         MainActivity.db.removeCard(c);
-                                        try {
-                                            MainActivity.db.editPage(MainActivity.allPagesList.get(MainActivity.allPagesList.get(position).id));
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
+                                        MainActivity.db.editPage(MainActivity.allPagesList.get(MainActivity.allPagesList.get(position).id));
                                     }
 
                                     MainActivity.db.removePage(MainActivity.allPagesList.get(holder.getAdapterPosition()));
@@ -193,29 +189,16 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
             MainActivity.allPagesList.get(position).title = newPage;
         else
             MainActivity.allPagesList.get(position).title = editText.getText().toString();
-        try {
-            MainActivity.db.editPage(MainActivity.allPagesList.get(position));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        MainActivity.db.editPage(MainActivity.allPagesList.get(position));
     }
     private void changeCategory(EditText editText2, Switch sw, int position) {
         MainActivity.allPagesList.get(position).category = sw.isChecked();
         MainActivity.allPagesList.get(position).category_name = editText2.getText().toString();
-        try {
-            MainActivity.db.editPage(MainActivity.allPagesList.get(position));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        MainActivity.db.editPage(MainActivity.allPagesList.get(position));
     }
     private void changeSection(int position) {
         MainActivity.allPagesList.get(position).section = !MainActivity.currentSection;
-
-        try {
-            MainActivity.db.editPage(MainActivity.allPagesList.get(position));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        MainActivity.db.editPage(MainActivity.allPagesList.get(position));
     }
 
     public PageAdapter(ArrayList<Page> myDataset, String newPageTitle, boolean isPersonal) {

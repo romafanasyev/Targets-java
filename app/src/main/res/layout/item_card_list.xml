@@ -31,6 +31,16 @@
             android:scrollbars="vertical"
             android:textSize="18sp"
             android:textStyle="bold" />
+        <EditText
+            android:id="@+id/add_point"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/add_point"
+            android:inputType="textCapSentences"
+            android:minLines="1"
+            android:scrollbars="vertical"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"

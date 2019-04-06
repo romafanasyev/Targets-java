@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/change_title" android:title="@string/change_title"></item>
+    <item android:id="@+id/change_icon" android:title="@string/icon"></item>
     <item android:id="@+id/change_category" android:title="@string/category"></item>
     <item android:id="@+id/menu_move_to" android:title="@string/move_to"></item>
     <item android:id="@+id/delete" android:title="@string/delete"></item>

@@ -130,7 +130,7 @@ public class DBHelper extends SQLiteOpenHelper {
         public static final String COLUMN_PAGE_ID = "page_id";
     }
 
-    public int editPage(Page page) throws JSONException {
+    public int editPage(Page page) {
         ContentValues cv = new ContentValues();
         cv.put(PagesTable.COLUMN_CATEGORY, page.getCategory());
         cv.put(PagesTable.COLUMN_CATEGORYNAME,(page.getCategoryName()));
@@ -138,7 +138,11 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(PagesTable.COLUMN_SECTION, page.section);
         JSONObject json = new JSONObject();
 
-        json.put("page_cards", new JSONArray(page.cards));
+        try {
+            json.put("page_cards", new JSONArray(page.cards));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         String putCards = json.toString();
         cv.put(PagesTable.COLUMN_CARDS, putCards);
         return db.update(PagesTable.TABLE_NAME, cv, PagesTable.COLUMN_ID + " = ?",
@@ -157,7 +161,7 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public ArrayList<Page> getAllPages() throws JSONException {
+    public ArrayList<Page> getAllPages() {
         ArrayList<Page> pageList = new ArrayList<>();
         db = getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM " + PagesTable.TABLE_NAME, null);
@@ -171,7 +175,12 @@ public class DBHelper extends SQLiteOpenHelper {
                 page.id = c.getInt(c.getColumnIndex(PagesTable.COLUMN_ID));
                 page.section = c.getInt(c.getColumnIndex(PagesTable.COLUMN_SECTION)) > 0;
 
-                JSONObject json = new JSONObject(c.getString(c.getColumnIndex(PagesTable.COLUMN_CARDS)));
+                JSONObject json = null;
+                try {
+                    json = new JSONObject(c.getString(c.getColumnIndex(PagesTable.COLUMN_CARDS)));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 JSONArray cards = json.optJSONArray("page_cards");
                 for (int i = 0; i < cards.length(); i++) {
                     page.cards.add(cards.optInt(i));

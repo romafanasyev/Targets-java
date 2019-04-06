@@ -1,11 +1,13 @@
 package com.example.roman.targets;
 
 public class Card {
+    CardType type;
     int id;
     String title;
     String text;
     int pageid;
 
+    //TODO: change constructor
     Card(int id, int pageid, String title, String text)
     {
         this.id = id;
@@ -17,4 +19,8 @@ public class Card {
 
     }
 
+    enum CardType
+    {
+        Note, List, Question, Deadline
+    }
 }

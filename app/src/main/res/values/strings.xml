@@ -21,8 +21,15 @@
     <string name="card_delete_message">Are you sure? This action can not be undone.</string>
     <string name="no">No</string>
     <string name="add_page_work">+ Add page (Work)</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="move_to">Move to</string>
+    <string name="icon">Icon</string>
+    <string name="add_point">Add point…</string>
+
+    <string-array name="card_types">
+        <item>Note</item>
+        <item>List</item>
+        <item>Deadline</item>
+        <item>Question</item>
+    </string-array>
 </resources>

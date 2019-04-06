@@ -1,7 +1,6 @@
 package com.example.roman.targets;
 
 import android.app.AlertDialog;
-import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -24,7 +23,6 @@ import org.json.JSONException;
 import java.util.ArrayList;
 
 import androidx.cardview.widget.CardView;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterViewHolder> {
@@ -112,7 +110,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                                                                 int viewType) {
         // create a new view
         CardView v = (CardView) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_card, parent, false);
+                .inflate(R.layout.item_card_note, parent, false);
         CardAdapterViewHolder vh = new CardAdapterViewHolder(v);
         return vh;
     }
@@ -188,11 +186,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                             Card c = new Card();
                             c.id = mDataset.get(position).id;
                             MainActivity.db.removeCard(c);
-                            try {
-                                MainActivity.db.editPage(MainActivity.allPagesList.get(pageId));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                            MainActivity.db.editPage(MainActivity.allPagesList.get(pageId));
                             updateState();
                         }
                     });
@@ -301,11 +295,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             Card c = new Card();
             c.id = selectedCards.get(i);
             MainActivity.db.removeCard(c);
-            try {
-                MainActivity.db.editPage(MainActivity.allPagesList.get(pageId));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            MainActivity.db.editPage(MainActivity.allPagesList.get(pageId));
         }
         updateState();
     }

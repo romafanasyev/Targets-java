@@ -20,8 +20,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.json.JSONException;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -84,7 +82,7 @@ public class WorkFragment extends Fragment {
                 AlertDialog.Builder addBuilder = new AlertDialog.Builder(getContext());
                 addBuilder.setMessage(R.string.add_page_personal);
                 LayoutInflater inflater = LayoutInflater.from(getContext());
-                View dialog = inflater.inflate(R.layout.add_dialog, null);
+                View dialog = inflater.inflate(R.layout.add_page_dialog, null);
                 final EditText editText = dialog.findViewById(R.id.editPageName);
                 addBuilder.setView(dialog);
                 addBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {

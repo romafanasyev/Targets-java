@@ -83,11 +83,7 @@ public class MainActivity extends AppCompatActivity {
         activityContext = this;
         activity = this;
         db = new DBHelper(this);
-        try {
-            allPagesList=db.getAllPages();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        allPagesList=db.getAllPages();
 
         if (allPagesList.isEmpty()) {
             allPagesList.add(new Page(0, "", true));
@@ -127,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
                 navigate(CardsFragment.newInstance(id));
                 return false;
             }
-            return super.onKeyDown(keyCode, event);
         }
         return super.onKeyDown(keyCode, event);
     }
