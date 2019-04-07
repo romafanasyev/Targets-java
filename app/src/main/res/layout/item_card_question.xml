@@ -36,7 +36,8 @@
             android:inputType="textCapSentences|textMultiLine"
             android:minLines="1"
             android:scrollbars="vertical"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:backgroundTint="@color/transparent"/>
 
         <LinearLayout
             android:id="@+id/edit_mode_menu"

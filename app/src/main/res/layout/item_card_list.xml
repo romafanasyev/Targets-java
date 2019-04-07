@@ -30,7 +30,8 @@
             android:minLines="1"
             android:scrollbars="vertical"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:backgroundTint="@color/transparent"/>
         <EditText
             android:id="@+id/add_point"
             android:layout_width="match_parent"
@@ -40,7 +41,8 @@
             android:minLines="1"
             android:scrollbars="vertical"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:backgroundTint="@color/transparent"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"

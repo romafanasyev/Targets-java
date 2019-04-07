@@ -37,7 +37,8 @@
             android:minLines="1"
             android:scrollbars="vertical"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:backgroundTint="@color/transparent"/>
 
         <EditText
             android:id="@+id/card_text"
@@ -47,7 +48,8 @@
             android:inputType="textCapSentences|textMultiLine"
             android:minLines="1"
             android:scrollbars="vertical"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:backgroundTint="@color/transparent"/>
 
         <LinearLayout
             android:id="@+id/edit_mode_menu"

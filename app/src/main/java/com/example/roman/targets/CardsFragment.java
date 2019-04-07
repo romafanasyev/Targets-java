@@ -172,38 +172,6 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
         return view;
     }
 
-    private AlertDialog switchCardType(Card.CardType cardType1, AlertDialog dialog){
-        cardType = cardType1;
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        LayoutInflater inflater1 = getLayoutInflater();
-        View d = inflater1.inflate(R.layout.item_card_note, null);
-        d.findViewById(R.id.card_m_title).setVisibility(View.GONE);
-        d.findViewById(R.id.card_m_text).setVisibility(View.GONE);
-        d.findViewById(R.id.delete_card).setVisibility(View.GONE);
-        final EditText mTitle = d.findViewById(R.id.card_title);
-        final EditText mText = d.findViewById(R.id.card_text);
-        builder.setView(d);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                if (!mTitle.getText().toString().trim().isEmpty() || !mText.getText().toString().trim().isEmpty()) {
-                    Card res = new Card(MainActivity.db.cardTableSize(), pageID, mTitle.getText().toString(), mText.getText().toString());
-                    MainActivity.db.addCard(res);
-                    MainActivity.allPagesList.get(pageID).cards.add(MainActivity.db.cardTableSize() - 1);
-                    MainActivity.db.editPage(MainActivity.allPagesList.get(pageID));
-                    mAdapter.updateState();
-                }
-            }
-        });
-        return builder.create();
-    }
     //another default class members:
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
