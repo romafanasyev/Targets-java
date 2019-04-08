@@ -46,6 +46,7 @@ public class PersonalFragment extends Fragment {
         //my code
     public RecyclerView mRecyclerView;
     public RecyclerView.Adapter mAdapter;
+    static TextView noPages;
     private LinearLayoutManager mLayoutManager;
     private Button add_button;
 
@@ -59,6 +60,10 @@ public class PersonalFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_personal, container, false);
+
+        noPages = view.findViewById(R.id.no_pages_personal);
+
+        checkPages();
 
         mRecyclerView = view.findViewById(R.id.pages_list_personal);
 
@@ -127,6 +132,19 @@ public class PersonalFragment extends Fragment {
         }
         MainActivity.db.addPage(MainActivity.allPagesList.get(MainActivity.allPagesList.size()-1));
         mAdapter.notifyDataSetChanged();
+    }
+
+    public void checkPages()
+    {
+        noPages.setVisibility(View.VISIBLE);
+        for (int i = 1; i<MainActivity.allPagesList.size(); i++)
+        {
+            Page page = MainActivity.allPagesList.get(i);
+            if (page.section) {
+                noPages.setVisibility(View.GONE);
+                break;
+            }
+        }
     }
 
     @Override

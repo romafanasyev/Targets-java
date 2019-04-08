@@ -8,8 +8,6 @@ import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
@@ -38,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     public static Fragment personalFragment = new PersonalFragment();
     public static Fragment workFragment = new WorkFragment();
     public static Fragment notificationsFragment = new NotificationsFragment();
-    public static Fragment moreFragment = new MoreFragment();
+    public static Fragment moreFragment = new PreferencesFragment();
     public static Fragment currentFragment;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener

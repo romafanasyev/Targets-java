@@ -10,5 +10,6 @@
         android:layout_margin="16dp"
         android:ems="10"
         android:inputType="textCapSentences"
-        android:hint="@string/title" />
+        android:hint="@string/title"
+        android:backgroundTint="@color/transparent"/>
 </LinearLayout>

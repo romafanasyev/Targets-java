@@ -42,8 +42,9 @@
             android:layout_height="60dp"
             android:layout_weight="0"
             android:background="@drawable/ic_lens_black_24dp"
+            android:backgroundTint="@color/colorAccent"
             android:gravity="center_vertical"
-            android:text="A"
+            android:text="H"
             android:textAlignment="center"
             android:textColor="#FFFFFF"
             android:textSize="28sp" />

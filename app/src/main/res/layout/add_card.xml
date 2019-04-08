@@ -30,7 +30,8 @@
                 android:minLines="1"
                 android:scrollbars="vertical"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:backgroundTint="@color/transparent" />
 
             <EditText
                 android:id="@+id/note_text"
@@ -40,7 +41,8 @@
                 android:inputType="textCapSentences|textMultiLine"
                 android:minLines="1"
                 android:scrollbars="vertical"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:backgroundTint="@color/transparent"/>
 
         </LinearLayout>
     </LinearLayout>
@@ -72,7 +74,8 @@
                 android:minLines="1"
                 android:scrollbars="vertical"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:backgroundTint="@color/transparent"/>
             <EditText
                 android:id="@+id/add_point"
                 android:layout_width="match_parent"
@@ -82,7 +85,8 @@
                 android:minLines="1"
                 android:scrollbars="vertical"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:backgroundTint="@color/transparent"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
@@ -121,7 +125,8 @@
                         android:minLines="1"
                         android:scrollbars="vertical"
                         android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:backgroundTint="@color/transparent"/>
 
                 </LinearLayout>
 
@@ -151,7 +156,8 @@
             android:inputType="textCapSentences|textMultiLine"
             android:minLines="1"
             android:scrollbars="vertical"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:backgroundTint="@color/transparent"/>
 
         <TextView
             android:id="@+id/textView2"

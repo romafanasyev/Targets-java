@@ -17,8 +17,6 @@ import android.widget.PopupMenu;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +30,15 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final PageAdapterViewHolder holder, final int position) {
+        if (MainActivity.section == MainActivity.Section.Personal) {
+            PersonalFragment pf = (PersonalFragment)MainActivity.activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
+            pf.checkPages();
+        }
+        if (MainActivity.section == MainActivity.Section.Work) {
+            WorkFragment pf = (WorkFragment)MainActivity.activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
+            pf.checkPages();
+        }
+
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
@@ -231,7 +238,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
             mButton = v.findViewById(R.id.pageActionButton);
             popupMenu = new PopupMenu(MainActivity.applicationContext(), mButton);
             popupMenu.getMenuInflater().inflate(R.menu.page, popupMenu.getMenu());
-            popupMenu.getMenu().getItem(2).setTitle(MainActivity.activity.getResources().getString(R.string.move_to) + " " + (section ? MainActivity.activity.getResources().getString(R.string.title_work) : MainActivity.activity.getResources().getString(R.string.title_personal)));
+            popupMenu.getMenu().getItem(3).setTitle(MainActivity.activity.getResources().getString(R.string.move_to) + " " + (section ? MainActivity.activity.getResources().getString(R.string.title_work) : MainActivity.activity.getResources().getString(R.string.title_personal)));
 
             mButton.setOnClickListener(new View.OnClickListener() {
                 @Override
