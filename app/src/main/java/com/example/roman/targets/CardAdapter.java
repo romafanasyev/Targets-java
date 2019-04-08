@@ -131,6 +131,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final CardAdapterViewHolder holder, final int position) {
+        CardsFragment cf = (CardsFragment)MainActivity.activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
+        cf.checkCards();
+
         final Card currentCard = mDataset.get(position);
         holder.cardMenu.setVisibility(View.GONE);
 

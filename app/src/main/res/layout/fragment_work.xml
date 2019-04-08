@@ -26,6 +26,20 @@
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <TextView
+            android:id="@+id/no_pages_work"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:text="@string/no_pages"
+            android:textSize="28sp"
+            app:layout_constraintBottom_toBottomOf="@+id/pages_list_work"
+            app:layout_constraintEnd_toEndOf="@+id/pages_list_work"
+            app:layout_constraintStart_toStartOf="@+id/pages_list_work"
+            app:layout_constraintTop_toTopOf="@+id/pages_list_work" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/pages_list_work"
             android:layout_width="match_parent"

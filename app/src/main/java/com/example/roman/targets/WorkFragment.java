@@ -48,6 +48,7 @@ public class WorkFragment extends Fragment {
     public RecyclerView.Adapter mAdapter;
     private LinearLayoutManager mLayoutManager;
     private Button add_button;
+    static TextView noPages;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,9 @@ public class WorkFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_work, container, false);
+        noPages = view.findViewById(R.id.no_pages_work);
+
+        checkPages();
 
         mRecyclerView = view.findViewById(R.id.pages_list_work);
 
@@ -134,6 +138,18 @@ public class WorkFragment extends Fragment {
         }
         MainActivity.db.addPage(MainActivity.allPagesList.get(MainActivity.allPagesList.size()-1));
         mAdapter.notifyDataSetChanged();
+    }
+
+    public void checkPages()
+    {
+        noPages.setVisibility(View.VISIBLE);
+        for (Page page : MainActivity.allPagesList)
+        {
+            if (!page.section) {
+                noPages.setVisibility(View.GONE);
+                break;
+            }
+        }
     }
 
     @Override

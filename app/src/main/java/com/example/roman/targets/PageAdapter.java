@@ -17,8 +17,6 @@ import android.widget.PopupMenu;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +30,15 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final PageAdapterViewHolder holder, final int position) {
+        if (MainActivity.section == MainActivity.Section.Personal) {
+            PersonalFragment pf = (PersonalFragment)MainActivity.activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
+            pf.checkPages();
+        }
+        if (MainActivity.section == MainActivity.Section.Work) {
+            WorkFragment pf = (WorkFragment)MainActivity.activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
+            pf.checkPages();
+        }
+
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 

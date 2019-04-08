@@ -1,6 +1,7 @@
 package com.example.roman.targets;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -70,7 +71,12 @@ public class CardEditFragment extends Fragment {
         // in content do not change the layout size of the RecyclerView
 
         mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL);
+
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        int defaultValue = 1;
+        int count = sharedPref.getInt("editColumns", defaultValue);
+        // use a layout manager
+        mLayoutManager = new StaggeredGridLayoutManager(count,StaggeredGridLayoutManager.VERTICAL);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new CardAdapter(pageID, true, cardPosition);

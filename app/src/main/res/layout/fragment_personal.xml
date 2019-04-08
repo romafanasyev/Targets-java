@@ -11,6 +11,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/no_pages_personal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:text="@string/no_pages"
+            android:textSize="28sp"
+            app:layout_constraintBottom_toBottomOf="@+id/pages_list_personal"
+            app:layout_constraintEnd_toEndOf="@+id/pages_list_personal"
+            app:layout_constraintStart_toStartOf="@+id/pages_list_personal"
+            app:layout_constraintTop_toTopOf="@+id/pages_list_personal" />
+
         <Button
             android:id="@+id/add_page_button"
             android:layout_width="match_parent"

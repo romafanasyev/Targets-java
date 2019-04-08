@@ -3,6 +3,7 @@ package com.example.roman.targets;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -34,12 +35,10 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
  * create an instance of this fragment.
  */
 public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.AnimationListener {
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PAGE_ID = "param1";
     public int pageID;
     private OnFragmentInteractionListener mListener;
-
-    Card.CardType cardType;
+    static TextView noCards;
 
     public CardsFragment() {
         // Required empty public constructor
@@ -68,8 +67,10 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_cards, container, false);
+
+        noCards = view.findViewById(R.id.no_cards);
+
         mRecyclerView = view.findViewById(R.id.card_list);
         TextView title = view.findViewById(R.id.currentPageName);
         String section = "";
@@ -81,12 +82,17 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
-            // use a layout manager
-            mLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
-            mRecyclerView.setLayoutManager(mLayoutManager);
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        int defaultValue = 2;
+        int count = sharedPref.getInt("displayColumns", defaultValue);
+        // use a layout manager
+        mLayoutManager = new StaggeredGridLayoutManager(count,StaggeredGridLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
-            mAdapter = new CardAdapter(pageID,false, 0);
-            mRecyclerView.setAdapter(mAdapter);
+        mAdapter = new CardAdapter(pageID,false, 0);
+        mRecyclerView.setAdapter(mAdapter);
+
+        checkCards();
 
             new ItemTouchHelper(new RecyclerNameTouchHelper(this)).attachToRecyclerView(mRecyclerView);
 
@@ -170,6 +176,13 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
                 }
             });
         return view;
+    }
+
+    public void checkCards()
+    {
+        if (mAdapter.mDataset.size() > 0)
+            noCards.setVisibility(View.GONE);
+        else noCards.setVisibility(View.VISIBLE);
     }
 
     //another default class members:

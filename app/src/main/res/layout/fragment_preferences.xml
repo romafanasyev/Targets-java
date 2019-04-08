@@ -4,16 +4,74 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MoreFragment">
+    tools:context=".PreferencesFragment">
+
+    <SeekBar
+        android:id="@+id/editSeekBar"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="158dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="108dp"
+        android:max="4"
+        android:progress="0"
+        app:layout_constraintEnd_toEndOf="@+id/displaySeekBar"
+        app:layout_constraintStart_toStartOf="@+id/displaySeekBar"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="108dp"
+        android:text="@string/number_of_columns_edit_mode"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/colnum_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toTopOf="@+id/editSeekBar"
+        app:layout_constraintEnd_toEndOf="@+id/editSeekBar"
+        app:layout_constraintStart_toStartOf="@+id/editSeekBar"
+        tools:text="1" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="TextView"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="44dp"
+        android:text="@string/number_of_columns_display_mode"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <SeekBar
+        android:id="@+id/displaySeekBar"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="158dp"
+        android:layout_height="19dp"
+        android:layout_marginTop="44dp"
+        android:max="4"
+        android:progress="1"
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/colnum_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toTopOf="@+id/displaySeekBar"
+        app:layout_constraintEnd_toEndOf="@+id/displaySeekBar"
+        app:layout_constraintStart_toStartOf="@+id/displaySeekBar"
+        tools:text="2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
