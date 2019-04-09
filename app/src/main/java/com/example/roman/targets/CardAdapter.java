@@ -23,6 +23,7 @@ import org.json.JSONException;
 import java.util.ArrayList;
 
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterViewHolder> {
@@ -131,8 +132,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final CardAdapterViewHolder holder, final int position) {
-        CardsFragment cf = (CardsFragment)MainActivity.activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
-        cf.checkCards();
+        Fragment f = MainActivity.activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
+        if (f instanceof CardsFragment)
+            ((CardsFragment)f).checkCards();
 
         final Card currentCard = mDataset.get(position);
         holder.cardMenu.setVisibility(View.GONE);
