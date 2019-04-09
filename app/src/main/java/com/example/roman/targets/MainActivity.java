@@ -1,6 +1,7 @@
 package com.example.roman.targets;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.KeyEvent;
@@ -87,7 +88,12 @@ public class MainActivity extends AppCompatActivity {
             allPagesList.add(new Page(0, "", true));
             db.addPage(MainActivity.allPagesList.get(0));
         }
-        mainFragment = CardsFragment.newInstance(0);
+
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        if (sharedPref.getBoolean("quickEdit", false)) {
+            mainFragment = CardsFragment.newInstance(0);
+        }
+        else mainFragment = CardQuickEditFragment.newInstance(0);
 
         section = Section.Main;
         navigate(mainFragment);
@@ -102,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
     {
         if ((keyCode == KeyEvent.KEYCODE_BACK))
         {
-            if (currentFragment instanceof CardsFragment)
+            if (currentFragment instanceof CardsFragment || currentFragment instanceof CardQuickEditFragment)
             {
                 if (section == Section.Personal) {
                     personalFragment = new PersonalFragment();

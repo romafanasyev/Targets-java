@@ -10,7 +10,9 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 
 
@@ -19,7 +21,8 @@ public class PreferencesFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     SeekBar displaySeekBar, editSeekBar;
-    TextView displayText, editText;
+    TextView displayText, editText, tv4;
+    Switch quickEditSwitch;
 
     public PreferencesFragment() {
         // Required empty public constructor
@@ -44,8 +47,13 @@ public class PreferencesFragment extends Fragment {
         editSeekBar = view.findViewById(R.id.editSeekBar);
         displayText = view.findViewById(R.id.colnum_display);
         editText = view.findViewById(R.id.colnum_edit);
+        quickEditSwitch = view.findViewById(R.id.quick_edit_switch);
+        tv4 = view.findViewById(R.id.textView4);
 
         SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+
+        boolean quickEditEnabled = sharedPref.getBoolean("quickEdit", false);
+        quickEditSwitch.setChecked(quickEditEnabled);
 
         int defaultValue = 2;
         int count = sharedPref.getInt("displayColumns", defaultValue);
@@ -56,6 +64,8 @@ public class PreferencesFragment extends Fragment {
         count = sharedPref.getInt("editColumns", defaultValue);
         editSeekBar.setProgress(count-1);
         editText.setText(String.valueOf(count));
+
+        quickEditSwitch.setChecked(sharedPref.getBoolean("quickEdit", false));
 
         displaySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -95,6 +105,27 @@ public class PreferencesFragment extends Fragment {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
+            }
+        });
+        quickEditSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                if (isChecked) {
+                    editSeekBar.setVisibility(View.GONE);
+                    editText.setVisibility(View.GONE);
+                    tv4.setVisibility(View.GONE);
+                    editor.putBoolean("quickEdit", true);
+                    editor.apply();
+                }
+                else {
+                    editSeekBar.setVisibility(View.VISIBLE);
+                    editText.setVisibility(View.VISIBLE);
+                    tv4.setVisibility(View.VISIBLE);
+                    editor.putBoolean("quickEdit", false);
+                    editor.apply();
+                }
             }
         });
         return view;

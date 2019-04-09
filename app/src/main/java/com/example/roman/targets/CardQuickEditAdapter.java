@@ -13,12 +13,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -26,10 +25,8 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterViewHolder> {
+public class CardQuickEditAdapter extends RecyclerView.Adapter<CardQuickEditAdapter.CardQuickEditAdapterViewHolder> {
     private int pageId;
-    private int selectedCardPosition;
-    public boolean editMode;
 
     public ArrayList<Card> mDataset;
     private boolean selectionMode = false;
@@ -38,7 +35,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class CardAdapterViewHolder extends RecyclerView.ViewHolder {
+    public static class CardQuickEditAdapterViewHolder extends RecyclerView.ViewHolder {
+        CheckBox select;
+
         TextView mTitle;
         TextView mText;
 
@@ -48,8 +47,11 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         LinearLayout cardMenu;
         ImageButton deleteButton;
 
-        public CardAdapterViewHolder(CardView v) {
+        public CardQuickEditAdapterViewHolder(CardView v) {
             super(v);
+
+            select = v.findViewById(R.id.card_check);
+
             mTitle = v.findViewById(R.id.card_m_title);
             mText = v.findViewById(R.id.card_m_text);
 
@@ -107,19 +109,17 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
 
     // Create new views (invoked by the layout manager)
     @Override
-    public CardAdapter.CardAdapterViewHolder onCreateViewHolder(ViewGroup parent,
-                                                                int viewType) {
+    public CardQuickEditAdapter.CardQuickEditAdapterViewHolder onCreateViewHolder(ViewGroup parent,
+                                                                         int viewType) {
         // create a new view
         CardView v = (CardView) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_card_note, parent, false);
-        CardAdapterViewHolder vh = new CardAdapterViewHolder(v);
+        CardQuickEditAdapterViewHolder vh = new CardQuickEditAdapterViewHolder(v);
         return vh;
     }
 
-    public CardAdapter(int pageId, boolean editMode, int selectedCardPosition) {
+    public CardQuickEditAdapter(int pageId) {
         this.pageId = pageId;
-        this.editMode = editMode;
-        this.selectedCardPosition = selectedCardPosition;
         mDataset = MainActivity.db.findPageCards(pageId);
     }
 
@@ -131,7 +131,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(final CardAdapterViewHolder holder, final int position) {
+    public void onBindViewHolder(final CardQuickEditAdapterViewHolder holder, final int position) {
         Fragment f = MainActivity.activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
         if (f instanceof CardsFragment)
             ((CardsFragment)f).checkCards();
@@ -143,37 +143,24 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (selectionMode) {
-                    if (!selectedCards.contains(currentCard.id))
-                        selectedCards.add(currentCard.id);
-                    else selectedCards.remove(new Integer(currentCard.id));
-                    MainActivity.activity.actionMode.setTitle(selectedCards.size() + " " + MainActivity.activityContext().getResources().getString(R.string.selected));
-
-                    if (!selectedCards.isEmpty()) notifyDataSetChanged();
-                    else hideActions();
-                }
-                else if (!editMode) {
-                    CardEditFragment editFragment = CardEditFragment.newInstance(pageId, position);
-                    MainActivity.activity.navigate(editFragment);
-                }
-            }
-        };
-
-        // card long press action
-        View.OnLongClickListener longListener = new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
                 if (!selectionMode) {
                     showActions();
-                    selectedCards.add(currentCard.id);
-                    notifyDataSetChanged();
                 }
-                return true;
+
+                if (!selectedCards.contains(currentCard.id)) {
+                    selectedCards.add(currentCard.id);
+                    holder.select.setActivated(true);
+                }
+                else {
+                    selectedCards.remove(new Integer(currentCard.id));
+                    holder.select.setActivated(false);
+                }
+                MainActivity.activity.actionMode.setTitle(selectedCards.size() + " " + MainActivity.activityContext().getResources().getString(R.string.selected));
+
+                if (selectedCards.isEmpty())
+                    hideActions();
             }
         };
-
-        if (editMode)
-        {
             holder.mTitle.setVisibility(View.GONE);
             holder.mText.setVisibility(View.GONE);
 
@@ -231,7 +218,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                         int height = Math.round(MainActivity.activityContext().getResources().getDisplayMetrics().heightPixels * 0.7f);
                         if (holder.text.getHeight() < height)
                             holder.text.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
-                        CardEditFragment fragment = (CardEditFragment)MainActivity.activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
+                        CardQuickEditFragment fragment = (CardQuickEditFragment)MainActivity.activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
                         fragment.mRecyclerView.scrollToPosition(position);
                         holder.cardMenu.setVisibility(View.VISIBLE);
                     }
@@ -251,27 +238,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             holder.text.addTextChangedListener(textWatcher);
             holder.text.setOnFocusChangeListener(textFocusListener);
             holder.deleteButton.setOnClickListener(deleteListener);
-
-            if (position == selectedCardPosition) {
-                holder.text.requestFocus();
-                InputMethodManager imgr = (InputMethodManager) MainActivity.activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-                imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-            }
-        }
-        else {
-            holder.title.setVisibility(View.GONE);
-            holder.text.setVisibility(View.GONE);
-            holder.cardMenu.setVisibility(View.GONE);
-
-            holder.mTitle.setText(currentCard.title);
-            holder.mText.setText(currentCard.text);
-
-            holder.mTitle.setOnLongClickListener(longListener);
-            holder.mText.setOnLongClickListener(longListener);
-
-            holder.mTitle.setOnClickListener(clickListener);
-            holder.mText.setOnClickListener(clickListener);
-        }
+            holder.select.setOnClickListener(clickListener);
 
         if (selectedCards.contains(currentCard.id))
             holder.itemView.setBackgroundColor(Color.LTGRAY);
@@ -280,8 +247,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
 
         if (selectedCards.isEmpty())
             hideActions();
-
-        holder.itemView.findViewById(R.id.card_check).setVisibility(View.GONE);
     }
 
     public void showActions()
@@ -292,6 +257,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
 
     public void hideActions()
     {
+        selectionMode = false;
         if (MainActivity.activity.actionMode != null) {
             MainActivity.activity.actionMode.finish();
         }

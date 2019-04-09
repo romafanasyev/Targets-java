@@ -2,7 +2,9 @@
 package com.example.roman.targets;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -65,8 +67,17 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
             holder.mLinearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    CardsFragment cardsFragment = CardsFragment.newInstance(MainActivity.allPagesList.get(position).id);
-                    MainActivity.activity.navigate(cardsFragment);
+                    SharedPreferences sharedPref = MainActivity.activity.getPreferences(Context.MODE_PRIVATE);
+
+                    boolean quickEditEnabled = sharedPref.getBoolean("quickEdit", false);
+                    if (quickEditEnabled) {
+                        CardQuickEditFragment cardQuickEditFragment = CardQuickEditFragment.newInstance(MainActivity.allPagesList.get(position).id);
+                        MainActivity.activity.navigate(cardQuickEditFragment);
+                    }
+                    else {
+                        CardsFragment cardsFragment = CardsFragment.newInstance(MainActivity.allPagesList.get(position).id);
+                        MainActivity.activity.navigate(cardsFragment);
+                    }
                 }
             });
             //menu for current page
