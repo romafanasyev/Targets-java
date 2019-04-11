@@ -247,7 +247,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             };
 
             holder.title.addTextChangedListener(textWatcher);
-            holder.title.setOnFocusChangeListener(textFocusListener);
             holder.text.addTextChangedListener(textWatcher);
             holder.text.setOnFocusChangeListener(textFocusListener);
             holder.deleteButton.setOnClickListener(deleteListener);

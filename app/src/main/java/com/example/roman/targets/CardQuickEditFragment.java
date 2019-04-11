@@ -110,8 +110,8 @@ public class CardQuickEditFragment extends Fragment {
 
                 }
             });
-                            builder.setView(d);
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                builder.setView(d);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 

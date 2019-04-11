@@ -91,9 +91,9 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         if (sharedPref.getBoolean("quickEdit", false)) {
-            mainFragment = CardsFragment.newInstance(0);
+            mainFragment = CardQuickEditFragment.newInstance(0);
         }
-        else mainFragment = CardQuickEditFragment.newInstance(0);
+        else mainFragment = CardsFragment.newInstance(0);
 
         section = Section.Main;
         navigate(mainFragment);
@@ -167,6 +167,26 @@ public class MainActivity extends AppCompatActivity {
 
     public static Context activityContext() {
         return activityContext;
+    }
+
+    public static void switchQuickEditMode(boolean switch_to)
+    {
+        if (switch_to) {
+            if (mainFragment instanceof CardsFragment)
+                mainFragment = CardQuickEditFragment.newInstance(((CardsFragment) mainFragment).pageID);
+            if (personalFragment instanceof CardsFragment)
+                personalFragment = CardQuickEditFragment.newInstance(((CardsFragment) mainFragment).pageID);
+            if (workFragment instanceof CardsFragment)
+                workFragment = CardQuickEditFragment.newInstance(((CardsFragment) mainFragment).pageID);
+        }
+        else {
+            if (mainFragment instanceof CardQuickEditFragment)
+                mainFragment = CardsFragment.newInstance(((CardQuickEditFragment) mainFragment).pageID);
+            if (personalFragment instanceof CardQuickEditFragment)
+                personalFragment = CardsFragment.newInstance(((CardQuickEditFragment) mainFragment).pageID);
+            if (workFragment instanceof CardQuickEditFragment)
+                workFragment = CardsFragment.newInstance(((CardQuickEditFragment) mainFragment).pageID);
+        }
     }
 }
 

@@ -133,8 +133,8 @@ public class CardQuickEditAdapter extends RecyclerView.Adapter<CardQuickEditAdap
     @Override
     public void onBindViewHolder(final CardQuickEditAdapterViewHolder holder, final int position) {
         Fragment f = MainActivity.activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
-        if (f instanceof CardsFragment)
-            ((CardsFragment)f).checkCards();
+        if (f instanceof CardQuickEditFragment)
+            ((CardQuickEditFragment)f).checkCards();
 
         final Card currentCard = mDataset.get(position);
         holder.cardMenu.setVisibility(View.GONE);
@@ -159,6 +159,7 @@ public class CardQuickEditAdapter extends RecyclerView.Adapter<CardQuickEditAdap
 
                 if (selectedCards.isEmpty())
                     hideActions();
+                notifyDataSetChanged();
             }
         };
             holder.mTitle.setVisibility(View.GONE);
@@ -234,16 +235,19 @@ public class CardQuickEditAdapter extends RecyclerView.Adapter<CardQuickEditAdap
             };
 
             holder.title.addTextChangedListener(textWatcher);
-            holder.title.setOnFocusChangeListener(textFocusListener);
             holder.text.addTextChangedListener(textWatcher);
             holder.text.setOnFocusChangeListener(textFocusListener);
             holder.deleteButton.setOnClickListener(deleteListener);
             holder.select.setOnClickListener(clickListener);
 
-        if (selectedCards.contains(currentCard.id))
+        if (selectedCards.contains(currentCard.id)) {
             holder.itemView.setBackgroundColor(Color.LTGRAY);
-        else
+            holder.select.setChecked(true);
+        }
+        else {
             holder.itemView.setBackgroundColor(MainActivity.activityContext().getResources().getColor(R.color.design_default_color_background));
+            holder.select.setChecked(false);
+        }
 
         if (selectedCards.isEmpty())
             hideActions();

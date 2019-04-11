@@ -54,6 +54,11 @@ public class PreferencesFragment extends Fragment {
 
         boolean quickEditEnabled = sharedPref.getBoolean("quickEdit", false);
         quickEditSwitch.setChecked(quickEditEnabled);
+        if (quickEditEnabled) {
+            editSeekBar.setVisibility(View.GONE);
+            editText.setVisibility(View.GONE);
+            tv4.setVisibility(View.GONE);
+        }
 
         int defaultValue = 2;
         int count = sharedPref.getInt("displayColumns", defaultValue);
@@ -126,6 +131,7 @@ public class PreferencesFragment extends Fragment {
                     editor.putBoolean("quickEdit", false);
                     editor.apply();
                 }
+                MainActivity.switchQuickEditMode(isChecked);
             }
         });
         return view;
