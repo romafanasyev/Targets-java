@@ -31,6 +31,7 @@
     <string name="no_pages">Схоже, сторінок ще нема. Додайте сторінку!</string>
     <string name="no_cards">Створіть картку!</string>
     <string name="quick_edit_mode">Швидке редагування</string>
+    <string name="edit_mode"> (Редагування)</string>
 
     <string-array name="card_types">
         <item>Нотатка</item>

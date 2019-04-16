@@ -30,6 +30,7 @@
     <string name="no_pages">Looks like that there\'s no pages. Create one!</string>
     <string name="no_cards">Add some cards!</string>
     <string name="quick_edit_mode">Quick Edit Mode</string>
+    <string name="edit_mode"> (Edit)</string>
 
     <string-array name="card_types">
         <item>Note</item>

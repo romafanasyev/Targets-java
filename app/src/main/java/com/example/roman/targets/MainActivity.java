@@ -131,6 +131,27 @@ public class MainActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    public void back() {
+        if (currentFragment instanceof CardsFragment || currentFragment instanceof CardQuickEditFragment)
+        {
+            if (section == Section.Personal) {
+                personalFragment = new PersonalFragment();
+                navigate(personalFragment);
+            }
+            if (section == Section.Work) {
+                workFragment = new WorkFragment();
+                navigate(workFragment);
+            }
+            if (section == Section.Main)
+                finish();
+        }
+        if (currentFragment instanceof CardEditFragment)
+        {
+            int id = ((CardEditFragment) currentFragment).pageID;
+            navigate(CardsFragment.newInstance(id));
+        }
+    }
+
     public void navigate(Fragment fragment)
     {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -175,17 +196,24 @@ public class MainActivity extends AppCompatActivity {
             if (mainFragment instanceof CardsFragment)
                 mainFragment = CardQuickEditFragment.newInstance(((CardsFragment) mainFragment).pageID);
             if (personalFragment instanceof CardsFragment)
-                personalFragment = CardQuickEditFragment.newInstance(((CardsFragment) mainFragment).pageID);
+                personalFragment = CardQuickEditFragment.newInstance(((CardsFragment) personalFragment).pageID);
             if (workFragment instanceof CardsFragment)
-                workFragment = CardQuickEditFragment.newInstance(((CardsFragment) mainFragment).pageID);
+                workFragment = CardQuickEditFragment.newInstance(((CardsFragment) workFragment).pageID);
+
+            if (mainFragment instanceof CardEditFragment)
+                mainFragment = CardQuickEditFragment.newInstance(((CardEditFragment) mainFragment).pageID);
+            if (personalFragment instanceof CardEditFragment)
+                personalFragment = CardQuickEditFragment.newInstance(((CardEditFragment) personalFragment).pageID);
+            if (workFragment instanceof CardEditFragment)
+                workFragment = CardQuickEditFragment.newInstance(((CardEditFragment) workFragment).pageID);
         }
         else {
             if (mainFragment instanceof CardQuickEditFragment)
                 mainFragment = CardsFragment.newInstance(((CardQuickEditFragment) mainFragment).pageID);
             if (personalFragment instanceof CardQuickEditFragment)
-                personalFragment = CardsFragment.newInstance(((CardQuickEditFragment) mainFragment).pageID);
+                personalFragment = CardsFragment.newInstance(((CardQuickEditFragment) personalFragment).pageID);
             if (workFragment instanceof CardQuickEditFragment)
-                workFragment = CardsFragment.newInstance(((CardQuickEditFragment) mainFragment).pageID);
+                workFragment = CardsFragment.newInstance(((CardQuickEditFragment) workFragment).pageID);
         }
     }
 }

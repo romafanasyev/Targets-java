@@ -237,7 +237,7 @@ public class CardQuickEditAdapter extends RecyclerView.Adapter<CardQuickEditAdap
             holder.title.addTextChangedListener(textWatcher);
             holder.text.addTextChangedListener(textWatcher);
             holder.text.setOnFocusChangeListener(textFocusListener);
-            holder.deleteButton.setOnClickListener(deleteListener);
+            //holder.deleteButton.setOnClickListener(deleteListener);
             holder.select.setOnClickListener(clickListener);
 
         if (selectedCards.contains(currentCard.id)) {

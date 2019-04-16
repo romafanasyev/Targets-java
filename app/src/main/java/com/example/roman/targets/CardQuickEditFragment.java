@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -143,10 +144,11 @@ public class CardQuickEditFragment extends Fragment {
 
         mRecyclerView = view.findViewById(R.id.card_list);
         TextView title = view.findViewById(R.id.currentPageName);
-        String section = "";
+        String section;
         if (pageID !=0)
-            section = MainActivity.allPagesList.get(pageID).section ? getResources().getString(R.string.title_personal) : getResources().getString(R.string.title_work);
-        title.setText(section + " \\ " + MainActivity.allPagesList.get(pageID).title);
+            section = MainActivity.allPagesList.get(pageID).section ? getResources().getString(R.string.title_personal) + " \\ " : getResources().getString(R.string.title_work) + " \\ ";
+        else section = getString(R.string.title_main);
+        title.setText(section + MainActivity.allPagesList.get(pageID).title);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -162,6 +164,14 @@ public class CardQuickEditFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new CardQuickEditAdapter(pageID);
         mRecyclerView.setAdapter(mAdapter);
+
+        ImageButton backButton = view.findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.activity.back();
+            }
+        });
 
         checkCards();
 
