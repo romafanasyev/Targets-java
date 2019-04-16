@@ -25,10 +25,12 @@
     <string name="move_to">Move to</string>
     <string name="icon">Icon</string>
     <string name="add_point">Add point…</string>
-    <string name="number_of_columns_display_mode">Number of columns (display mode)</string>
+    <string name="number_of_columns_display_mode">Number of columns</string>
     <string name="number_of_columns_edit_mode">Number of columns (edit mode)</string>
     <string name="no_pages">Looks like that there\'s no pages. Create one!</string>
     <string name="no_cards">Add some cards!</string>
+    <string name="quick_edit_mode">Quick Edit Mode</string>
+    <string name="edit_mode"> (Edit)</string>
 
     <string-array name="card_types">
         <item>Note</item>

@@ -1,6 +1,7 @@
 package com.example.roman.targets;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.KeyEvent;
@@ -87,7 +88,12 @@ public class MainActivity extends AppCompatActivity {
             allPagesList.add(new Page(0, "", true));
             db.addPage(MainActivity.allPagesList.get(0));
         }
-        mainFragment = CardsFragment.newInstance(0);
+
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        if (sharedPref.getBoolean("quickEdit", false)) {
+            mainFragment = CardQuickEditFragment.newInstance(0);
+        }
+        else mainFragment = CardsFragment.newInstance(0);
 
         section = Section.Main;
         navigate(mainFragment);
@@ -102,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
     {
         if ((keyCode == KeyEvent.KEYCODE_BACK))
         {
-            if (currentFragment instanceof CardsFragment)
+            if (currentFragment instanceof CardsFragment || currentFragment instanceof CardQuickEditFragment)
             {
                 if (section == Section.Personal) {
                     personalFragment = new PersonalFragment();
@@ -123,6 +129,27 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    public void back() {
+        if (currentFragment instanceof CardsFragment || currentFragment instanceof CardQuickEditFragment)
+        {
+            if (section == Section.Personal) {
+                personalFragment = new PersonalFragment();
+                navigate(personalFragment);
+            }
+            if (section == Section.Work) {
+                workFragment = new WorkFragment();
+                navigate(workFragment);
+            }
+            if (section == Section.Main)
+                finish();
+        }
+        if (currentFragment instanceof CardEditFragment)
+        {
+            int id = ((CardEditFragment) currentFragment).pageID;
+            navigate(CardsFragment.newInstance(id));
+        }
     }
 
     public void navigate(Fragment fragment)
@@ -161,6 +188,33 @@ public class MainActivity extends AppCompatActivity {
 
     public static Context activityContext() {
         return activityContext;
+    }
+
+    public static void switchQuickEditMode(boolean switch_to)
+    {
+        if (switch_to) {
+            if (mainFragment instanceof CardsFragment)
+                mainFragment = CardQuickEditFragment.newInstance(((CardsFragment) mainFragment).pageID);
+            if (personalFragment instanceof CardsFragment)
+                personalFragment = CardQuickEditFragment.newInstance(((CardsFragment) personalFragment).pageID);
+            if (workFragment instanceof CardsFragment)
+                workFragment = CardQuickEditFragment.newInstance(((CardsFragment) workFragment).pageID);
+
+            if (mainFragment instanceof CardEditFragment)
+                mainFragment = CardQuickEditFragment.newInstance(((CardEditFragment) mainFragment).pageID);
+            if (personalFragment instanceof CardEditFragment)
+                personalFragment = CardQuickEditFragment.newInstance(((CardEditFragment) personalFragment).pageID);
+            if (workFragment instanceof CardEditFragment)
+                workFragment = CardQuickEditFragment.newInstance(((CardEditFragment) workFragment).pageID);
+        }
+        else {
+            if (mainFragment instanceof CardQuickEditFragment)
+                mainFragment = CardsFragment.newInstance(((CardQuickEditFragment) mainFragment).pageID);
+            if (personalFragment instanceof CardQuickEditFragment)
+                personalFragment = CardsFragment.newInstance(((CardQuickEditFragment) personalFragment).pageID);
+            if (workFragment instanceof CardQuickEditFragment)
+                workFragment = CardsFragment.newInstance(((CardQuickEditFragment) workFragment).pageID);
+        }
     }
 }
 

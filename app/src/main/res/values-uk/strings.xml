@@ -26,10 +26,12 @@
     <string name="move_to">Перемістити до</string>
     <string name="icon">Зображення</string>
     <string name="add_point">Додати пункт…</string>
-    <string name="number_of_columns_display_mode">Кількість стовпців (режим відображення)</string>
+    <string name="number_of_columns_display_mode">Кількість стовпців</string>
     <string name="number_of_columns_edit_mode">Кількість стовпців (режим редагування)</string>
     <string name="no_pages">Схоже, сторінок ще нема. Додайте сторінку!</string>
     <string name="no_cards">Створіть картку!</string>
+    <string name="quick_edit_mode">Швидке редагування</string>
+    <string name="edit_mode"> (Редагування)</string>
 
     <string-array name="card_types">
         <item>Нотатка</item>

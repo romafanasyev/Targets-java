@@ -6,12 +6,14 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -19,6 +21,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,7 +45,10 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
     private static final String ARG_PAGE_ID = "param1";
     public int pageID;
     private OnFragmentInteractionListener mListener;
+    public CardAdapter mAdapter;
+
     static TextView noCards;
+    RecyclerView mRecyclerView;
 
     public CardsFragment() {
         // Required empty public constructor
@@ -59,10 +70,6 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
         }
     }
 
-    RecyclerView mRecyclerView;
-    public CardAdapter mAdapter;
-    StaggeredGridLayoutManager mLayoutManager;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -72,10 +79,11 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
 
         mRecyclerView = view.findViewById(R.id.card_list);
         TextView title = view.findViewById(R.id.currentPageName);
-        String section = "";
+        String section;
         if (pageID !=0)
-            section = MainActivity.allPagesList.get(pageID).section ? getResources().getString(R.string.title_personal) : getResources().getString(R.string.title_work);
-        title.setText(section + " \\ " + MainActivity.allPagesList.get(pageID).title);
+            section = MainActivity.allPagesList.get(pageID).section ? getResources().getString(R.string.title_personal) + " \\ " : getResources().getString(R.string.title_work) + " \\ ";
+        else section = getString(R.string.title_main);
+        title.setText(section + MainActivity.allPagesList.get(pageID).title);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -85,18 +93,26 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
         int defaultValue = 2;
         int count = sharedPref.getInt("displayColumns", defaultValue);
         // use a layout manager
-        mLayoutManager = new StaggeredGridLayoutManager(count,StaggeredGridLayoutManager.VERTICAL);
+        StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(count, StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         mAdapter = new CardAdapter(pageID,false, 0);
         mRecyclerView.setAdapter(mAdapter);
+
+        ImageButton backButton = view.findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.activity.back();
+            }
+        });
 
         checkCards();
 
             new ItemTouchHelper(new RecyclerNameTouchHelper(this)).attachToRecyclerView(mRecyclerView);
 
             // add card button & dialog
-            FloatingActionButton add_button = view.findViewById(R.id.add_card);
+            final FloatingActionButton add_button = view.findViewById(R.id.add_card);
             add_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

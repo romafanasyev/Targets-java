@@ -11,46 +11,47 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/card_m_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="vertical"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/card_m_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="vertical"
-            android:textSize="18sp" />
-
-        <EditText
-            android:id="@+id/card_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="top"
-            android:inputType="textCapSentences|textMultiLine"
-            android:minLines="1"
-            android:scrollbars="vertical"
-            android:textSize="18sp"
-            android:backgroundTint="@color/transparent"/>
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:id="@+id/edit_mode_menu"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="4"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="12dp">
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/card_m_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="vertical"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-            <ImageButton
-                android:id="@+id/delete_card"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_delete_black_24dp" />
+            <TextView
+                android:id="@+id/card_m_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="vertical"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/card_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:inputType="textCapSentences|textMultiLine"
+                android:minLines="1"
+                android:scrollbars="vertical"
+                android:textSize="18sp"
+                android:backgroundTint="@color/transparent"/>
         </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/main_funcs"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_more_vert_black_24dp"
+            android:tint="@color/colorAccent"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
