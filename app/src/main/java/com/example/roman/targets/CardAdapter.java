@@ -3,33 +3,40 @@ package com.example.roman.targets;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterViewHolder> {
     private int pageId;
     private int selectedCardPosition;
     public boolean editMode;
+    String TAG = "myDebug";
 
     public ArrayList<Card> mDataset;
     private boolean selectionMode = false;
@@ -46,7 +53,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         EditText text;
 
         LinearLayout cardMenu;
-        ImageButton deleteButton;
+        ImageButton b1,b2,b3,b4,b5,b6;
+        PopupMenu popupMenu;
 
         public CardAdapterViewHolder(CardView v) {
             super(v);
@@ -57,7 +65,21 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             text = v.findViewById(R.id.card_text);
 
             cardMenu = v.findViewById(R.id.edit_mode_menu);
-            deleteButton = v.findViewById(R.id.delete_card);
+            b1 = v.findViewById(R.id.add_image);
+            b2 = v.findViewById(R.id.add_picture);
+            b3 = v.findViewById(R.id.add_question);
+            b4 = v.findViewById(R.id.add_divider);
+            b5 = v.findViewById(R.id.add_link);
+            b6 = v.findViewById(R.id.main_funcs);
+
+            popupMenu = new PopupMenu(MainActivity.applicationContext(), b6);
+            popupMenu.getMenuInflater().inflate(R.menu.card_actions, popupMenu.getMenu());
+            b6.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    popupMenu.show();
+                }
+            });
         }
     }
 
@@ -180,30 +202,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             holder.title.setText(currentCard.title);
             holder.text.setText(currentCard.text);
 
-            View.OnClickListener deleteListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AlertDialog.Builder deleteDialog = new AlertDialog.Builder(MainActivity.activityContext());
-                    deleteDialog.setMessage(R.string.card_delete_message);
-                    deleteDialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Card c = new Card();
-                            c.id = mDataset.get(position).id;
-                            MainActivity.db.removeCard(c);
-                            MainActivity.db.editPage(MainActivity.allPagesList.get(pageId));
-                            updateState();
-                        }
-                    });
-                    deleteDialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // do nothing
-                        }
-                    });
-                    deleteDialog.create().show();
-                }
-            };
             // saving changes to cards
             TextWatcher textWatcher = new TextWatcher() {
                 @Override
@@ -249,7 +247,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             holder.title.addTextChangedListener(textWatcher);
             holder.text.addTextChangedListener(textWatcher);
             holder.text.setOnFocusChangeListener(textFocusListener);
-            //holder.deleteButton.setOnClickListener(deleteListener);
 
             if (position == selectedCardPosition) {
                 holder.text.requestFocus();
@@ -258,6 +255,13 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             }
         }
         else {
+            SharedPreferences sharedPref = MainActivity.activity.getPreferences(Context.MODE_PRIVATE);
+            if (sharedPref.getBoolean("maxHeightEnabled", true)) {
+                int percent = sharedPref.getInt("maxHeight", 40);
+                int height = Math.round(MainActivity.activityContext().getResources().getDisplayMetrics().heightPixels * (percent / 100f));
+                holder.text.setMaxHeight(height);
+            }
+
             holder.title.setVisibility(View.GONE);
             holder.text.setVisibility(View.GONE);
             holder.cardMenu.setVisibility(View.GONE);
@@ -281,6 +285,37 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             hideActions();
 
         holder.itemView.findViewById(R.id.card_check).setVisibility(View.GONE);
+
+        holder.popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId())
+                {
+                    case R.id.delete_card:
+                        AlertDialog.Builder deleteDialog = new AlertDialog.Builder(MainActivity.activityContext());
+                        deleteDialog.setMessage(R.string.card_delete_message);
+                        deleteDialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Card c = new Card();
+                                c.id = mDataset.get(position).id;
+                                MainActivity.db.removeCard(c);
+                                MainActivity.db.editPage(MainActivity.allPagesList.get(pageId));
+                                updateState();
+                            }
+                        });
+                        deleteDialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        });
+                        deleteDialog.create().show();
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
     public void showActions()

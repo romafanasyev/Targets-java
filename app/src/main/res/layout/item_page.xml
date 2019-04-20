@@ -35,7 +35,7 @@
 
         <ImageButton
             android:id="@+id/drag_button"
-            style="?android:attr/borderlessButtonStyle"
+            style="@style/Base.Widget.AppCompat.ActionButton.Overflow"
             android:layout_width="20dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -64,7 +64,7 @@
 
         <ImageButton
             android:id="@+id/pageActionButton"
-            style="?android:attr/borderlessButtonStyle"
+            style="@style/Base.Widget.AppCompat.ActionButton.Overflow"
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:layout_weight="0"

@@ -147,7 +147,7 @@ public class CardQuickEditFragment extends Fragment {
         String section;
         if (pageID !=0)
             section = MainActivity.allPagesList.get(pageID).section ? getResources().getString(R.string.title_personal) + " \\ " : getResources().getString(R.string.title_work) + " \\ ";
-        else section = getString(R.string.title_main);
+        else section = "Targets";
         title.setText(section + MainActivity.allPagesList.get(pageID).title);
 
         // use this setting to improve performance if you know that changes
@@ -204,6 +204,8 @@ public class CardQuickEditFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        mAdapter.hideActions();
+        mAdapter.selectedCards.clear();
     }
 
     /**

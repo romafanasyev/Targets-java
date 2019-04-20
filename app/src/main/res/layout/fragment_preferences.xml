@@ -17,6 +17,7 @@
         android:layout_marginEnd="8dp"
         android:layout_weight="1"
         android:text="@string/number_of_columns_edit_mode"
+        android:textColor="#000000"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,6 +31,7 @@
         android:layout_marginBottom="8dp"
         android:gravity="center_vertical"
         android:text="1"
+        android:textColor="#000000"
         app:layout_constraintBottom_toTopOf="@+id/editSeekBar"
         app:layout_constraintEnd_toEndOf="@+id/editSeekBar"
         app:layout_constraintStart_toStartOf="@+id/editSeekBar" />
@@ -58,6 +60,7 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         android:text="@string/number_of_columns_display_mode"
+        android:textColor="#000000"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -85,6 +88,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp"
         android:text="2"
+        android:textColor="#000000"
         app:layout_constraintBottom_toTopOf="@+id/displaySeekBar"
         app:layout_constraintEnd_toEndOf="@+id/displaySeekBar"
         app:layout_constraintStart_toStartOf="@+id/displaySeekBar" />
@@ -101,14 +105,39 @@
 
     <Switch
         android:id="@+id/quick_edit_switch"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         android:text="@string/quick_edit_mode"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Switch
+        android:id="@+id/max_height_switch"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/enable_cards_max_height"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <Button
+        android:id="@+id/card_max_height"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="@+id/max_height_switch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="@+id/max_height_switch" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
