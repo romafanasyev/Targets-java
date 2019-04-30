@@ -29,8 +29,14 @@ import java.util.logging.Logger;
 
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.tabs.TabLayout;
+
+import static com.example.roman.targets.MainActivity.activity;
+import static com.example.roman.targets.MainActivity.switchQuickEditMode;
 
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterViewHolder> {
     private int pageId;
@@ -98,23 +104,36 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            if (item.getItemId() == R.id.delete_card) {
-                AlertDialog.Builder deleteDialog = new AlertDialog.Builder(MainActivity.activityContext());
-                deleteDialog.setMessage(R.string.card_delete_message);
-                deleteDialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        removeCards();
+            switch(item.getItemId()) {
+                case  R.id.delete_card:
+                    AlertDialog.Builder deleteDialog = new AlertDialog.Builder(MainActivity.activityContext());
+                    deleteDialog.setMessage(R.string.card_delete_message);
+                    deleteDialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            removeCards();
+                        }
+                    });
+                    deleteDialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // do nothing
+                        }
+                    });
+                    deleteDialog.create().show();
+                    return true;
+                case R.id.move_copy:
+                    c = new MoveCopyDialogFragment();
+                    c.show(activity.getSupportFragmentManager(), "copy");
+
+                    InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    View view = activity.getCurrentFocus();
+                    //If no view currently has focus, create a new one, just so we can grab a window token from it
+                    if (view == null) {
+                        view = new View(activity);
                     }
-                });
-                deleteDialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
-                    }
-                });
-                deleteDialog.create().show();
-                return true;
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    return true;
             }
             return false;
         }
@@ -154,7 +173,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final CardAdapterViewHolder holder, final int position) {
-        Fragment f = MainActivity.activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
+        Fragment f = activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
         if (f instanceof CardsFragment)
             ((CardsFragment)f).checkCards();
 
@@ -169,14 +188,14 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                     if (!selectedCards.contains(currentCard.id))
                         selectedCards.add(currentCard.id);
                     else selectedCards.remove(new Integer(currentCard.id));
-                    MainActivity.activity.actionMode.setTitle(selectedCards.size() + " " + MainActivity.activityContext().getResources().getString(R.string.selected));
+                    activity.actionMode.setTitle(selectedCards.size() + " " + MainActivity.activityContext().getResources().getString(R.string.selected));
 
                     if (!selectedCards.isEmpty()) notifyDataSetChanged();
                     else hideActions();
                 }
                 else if (!editMode) {
                     CardEditFragment editFragment = CardEditFragment.newInstance(pageId, position);
-                    MainActivity.activity.navigate(editFragment);
+                    activity.navigate(editFragment);
                 }
             }
         };
@@ -229,7 +248,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                         int height = Math.round(MainActivity.activityContext().getResources().getDisplayMetrics().heightPixels * 0.7f);
                         if (holder.text.getHeight() < height)
                             holder.text.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
-                        CardEditFragment fragment = (CardEditFragment)MainActivity.activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
+                        CardEditFragment fragment = (CardEditFragment) activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
                         fragment.mRecyclerView.scrollToPosition(position);
                         holder.cardMenu.setVisibility(View.VISIBLE);
                     }
@@ -237,7 +256,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                         holder.text.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                                 ViewGroup.LayoutParams.WRAP_CONTENT));
                         // hide keyboard
-                        InputMethodManager imm = (InputMethodManager)MainActivity.activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                         holder.cardMenu.setVisibility(View.GONE);
                     }
@@ -250,12 +269,12 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
 
             if (position == selectedCardPosition) {
                 holder.text.requestFocus();
-                InputMethodManager imgr = (InputMethodManager) MainActivity.activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imgr = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
             }
         }
         else {
-            SharedPreferences sharedPref = MainActivity.activity.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
             if (sharedPref.getBoolean("maxHeightEnabled", true)) {
                 int percent = sharedPref.getInt("maxHeight", 40);
                 int height = Math.round(MainActivity.activityContext().getResources().getDisplayMetrics().heightPixels * (percent / 100f));
@@ -312,6 +331,17 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                         });
                         deleteDialog.create().show();
                         break;
+                    case R.id.move_copy:
+                        c = new MoveCopyDialogFragment();
+                        c.show(activity.getSupportFragmentManager(), "copy");
+
+                        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        View view = activity.getCurrentFocus();
+                        //If no view currently has focus, create a new one, just so we can grab a window token from it
+                        if (view == null) {
+                            view = new View(activity);
+                        }
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
                 return true;
             }
@@ -321,13 +351,13 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
     public void showActions()
     {
         selectionMode = true;
-        MainActivity.activity.showActionMode(callback);
+        activity.showActionMode(callback);
     }
 
     public void hideActions()
     {
-        if (MainActivity.activity.actionMode != null) {
-            MainActivity.activity.actionMode.finish();
+        if (activity.actionMode != null) {
+            activity.actionMode.finish();
         }
     }
 
@@ -345,5 +375,10 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         mDataset = MainActivity.db.findPageCards(pageId);
         notifyDataSetChanged();
         hideActions();
+    }
+    private static MoveCopyDialogFragment c;
+    public static void dismissDialog()
+    {
+        c.dismiss();
     }
 }

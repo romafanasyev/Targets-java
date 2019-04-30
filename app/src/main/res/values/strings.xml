@@ -35,6 +35,9 @@
     <string name="change_color">Change color</string>
     <string name="share">Share</string>
     <string name="move_copy">Move/Copy</string>
+    <string name="move">Move</string>
+    <string name="copy">Copy</string>
+    <string name="make_instance">Make Instance</string>
 
     <string-array name="card_types">
         <item>Note</item>

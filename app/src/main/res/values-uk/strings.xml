@@ -36,6 +36,9 @@
     <string name="change_color">Змінити колір</string>
     <string name="share">Надіслати</string>
     <string name="move_copy">Перемістити/Копіювати</string>
+    <string name="move">Перемістити</string>
+    <string name="copy">Копіювати</string>
+    <string name="make_instance">Створити екземпляр</string>
 
     <string-array name="card_types">
         <item>Нотатка</item>
