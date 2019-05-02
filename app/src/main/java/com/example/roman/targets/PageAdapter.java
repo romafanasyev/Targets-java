@@ -215,16 +215,6 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                     return true;
                 }
             });
-
-            holder.dragButton.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
-                        mDragStartListener.onStartDrag(holder);
-                    }
-                    return false;
-                }
-            });
         }
     }
     private void changeTitle(EditText editText, int position)
@@ -279,7 +269,6 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
     public static class PageAdapterViewHolder extends RecyclerView.ViewHolder {
         public TextView mTextView;
         public ImageButton mButton;
-        public ImageView dragButton;
         public PopupMenu popupMenu;
         public TextView mCategory;
         public View mDivider;
@@ -294,7 +283,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
             popupMenu.getMenuInflater().inflate(R.menu.page, popupMenu.getMenu());
             popupMenu.getMenu().getItem(3).setTitle(MainActivity.activity.getResources().getString(R.string.move_to) + " " + (section ? MainActivity.activity.getResources().getString(R.string.title_work) : MainActivity.activity.getResources().getString(R.string.title_personal)));
 
-            mButton.setOnClickListener(new View.OnClickListener() {
+               mButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     popupMenu.show();
@@ -302,8 +291,6 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
             });
             mCategory = v.findViewById(R.id.category_title);
             mDivider = v.findViewById(R.id.category_divider);
-            dragButton = v.findViewById(R.id.drag_button);
-
             mLinearLayout = v.findViewById(R.id.show_cards);
         }
     }
