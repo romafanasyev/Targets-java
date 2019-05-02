@@ -8,30 +8,46 @@ import android.content.SharedPreferences;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
+import androidx.core.view.MotionEventCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterViewHolder> {
+import com.example.roman.targets.helper.ItemTouchHelperAdapter;
+import com.example.roman.targets.helper.OnStartDragListener;
+
+public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterViewHolder> implements ItemTouchHelperAdapter {
+
     private boolean section;
     private ArrayList<Page> mDataset;
     private PageAdapter pageAdapter = this;
     private String newPage; //when page title set to empty (do like that cuz need to access string resources)
+    OnStartDragListener mDragStartListener;
+
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final PageAdapterViewHolder holder, final int position) {
+
+
+
+
         if (MainActivity.section == MainActivity.Section.Personal) {
             PersonalFragment pf = (PersonalFragment)MainActivity.activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
             pf.checkPages();
@@ -199,6 +215,16 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                     return true;
                 }
             });
+
+            holder.dragButton.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                        mDragStartListener.onStartDrag(holder);
+                    }
+                    return false;
+                }
+            });
         }
     }
     private void changeTitle(EditText editText, int position)
@@ -219,10 +245,12 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
         MainActivity.db.editPage(MainActivity.allPagesList.get(position));
     }
 
-    public PageAdapter(ArrayList<Page> myDataset, String newPageTitle, boolean isPersonal) {
+    public PageAdapter(ArrayList<Page> myDataset, String newPageTitle, boolean isPersonal){
+
         mDataset = myDataset;
         newPage = newPageTitle;
         section = isPersonal;
+
     }
 
     // Create new views (invoked by the layout manager)
@@ -235,13 +263,28 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
         return vh;
     }
 
+    @Override
+    public void onItemDismiss(int position) {
+        mDataset.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        Collections.swap(mDataset, fromPosition, toPosition);
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
+    }
+
     public static class PageAdapterViewHolder extends RecyclerView.ViewHolder {
         public TextView mTextView;
         public ImageButton mButton;
+        public ImageView dragButton;
         public PopupMenu popupMenu;
         public TextView mCategory;
         public View mDivider;
         public LinearLayout mLinearLayout;
+
 
         public PageAdapterViewHolder(View v, boolean section) {
             super(v);
@@ -259,6 +302,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
             });
             mCategory = v.findViewById(R.id.category_title);
             mDivider = v.findViewById(R.id.category_divider);
+            dragButton = v.findViewById(R.id.drag_button);
 
             mLinearLayout = v.findViewById(R.id.show_cards);
         }
