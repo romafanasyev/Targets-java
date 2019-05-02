@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,6 +21,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.roman.targets.helper.ItemTouchHelperAdapter;
+import com.example.roman.targets.helper.OnStartDragListener;
+import com.example.roman.targets.helper.SimpleItemTouchHelperCallback;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,7 +34,11 @@ import android.widget.TextView;
  * Use the {@link PersonalFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class WorkFragment extends Fragment {
+public class WorkFragment extends Fragment  implements OnStartDragListener {
+
+
+    private ItemTouchHelper mItemTouchHelper;
+
 
     private OnFragmentInteractionListener mListener;
     public WorkFragment() {
@@ -77,6 +86,10 @@ public class WorkFragment extends Fragment {
         // specify an adapter (see also next example)
         mAdapter = new PageAdapter(MainActivity.allPagesList, getString(R.string.new_page),false);
         mRecyclerView.setAdapter(mAdapter);
+
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback((ItemTouchHelperAdapter) mAdapter);
+        mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
         add_button = view.findViewById(R.id.add_page_button);
 
@@ -164,6 +177,11 @@ public class WorkFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
+        mItemTouchHelper.startDrag(viewHolder);
     }
 
     /**
