@@ -31,6 +31,13 @@
     <string name="no_cards">Add some cards!</string>
     <string name="quick_edit_mode">Quick Edit Mode</string>
     <string name="edit_mode"> (Edit)</string>
+    <string name="enable_cards_max_height">Enable cards\' max height</string>
+    <string name="change_color">Change color</string>
+    <string name="share">Share</string>
+    <string name="move_copy">Move/Copy</string>
+    <string name="move">Move</string>
+    <string name="copy">Copy</string>
+    <string name="make_instance">Make Instance</string>
 
     <string-array name="card_types">
         <item>Note</item>

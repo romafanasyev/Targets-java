@@ -82,7 +82,7 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
         String section;
         if (pageID !=0)
             section = MainActivity.allPagesList.get(pageID).section ? getResources().getString(R.string.title_personal) + " \\ " : getResources().getString(R.string.title_work) + " \\ ";
-        else section = getString(R.string.title_main);
+        else section = "Targets";
         title.setText(section + MainActivity.allPagesList.get(pageID).title);
 
         // use this setting to improve performance if you know that changes

@@ -32,6 +32,13 @@
     <string name="no_cards">Створіть картку!</string>
     <string name="quick_edit_mode">Швидке редагування</string>
     <string name="edit_mode"> (Редагування)</string>
+    <string name="enable_cards_max_height">Увімкнути обмеження макс. висоти картки</string>
+    <string name="change_color">Змінити колір</string>
+    <string name="share">Надіслати</string>
+    <string name="move_copy">Перемістити/Копіювати</string>
+    <string name="move">Перемістити</string>
+    <string name="copy">Копіювати</string>
+    <string name="make_instance">Створити екземпляр</string>
 
     <string-array name="card_types">
         <item>Нотатка</item>

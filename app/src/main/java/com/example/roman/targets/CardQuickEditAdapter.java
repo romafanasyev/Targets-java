@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -45,7 +46,8 @@ public class CardQuickEditAdapter extends RecyclerView.Adapter<CardQuickEditAdap
         EditText text;
 
         LinearLayout cardMenu;
-        ImageButton deleteButton;
+        ImageButton b1,b2,b3,b4,b5,b6;
+        PopupMenu popupMenu;
 
         public CardQuickEditAdapterViewHolder(CardView v) {
             super(v);
@@ -59,7 +61,21 @@ public class CardQuickEditAdapter extends RecyclerView.Adapter<CardQuickEditAdap
             text = v.findViewById(R.id.card_text);
 
             cardMenu = v.findViewById(R.id.edit_mode_menu);
-            deleteButton = v.findViewById(R.id.delete_card);
+            b1 = v.findViewById(R.id.add_image);
+            b2 = v.findViewById(R.id.add_picture);
+            b3 = v.findViewById(R.id.add_question);
+            b4 = v.findViewById(R.id.add_divider);
+            b5 = v.findViewById(R.id.add_link);
+            b6 = v.findViewById(R.id.main_funcs);
+
+            popupMenu = new PopupMenu(MainActivity.applicationContext(), b6);
+            popupMenu.getMenuInflater().inflate(R.menu.card_actions, popupMenu.getMenu());
+            b6.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    popupMenu.show();
+                }
+            });
         }
     }
 
@@ -237,7 +253,6 @@ public class CardQuickEditAdapter extends RecyclerView.Adapter<CardQuickEditAdap
             holder.title.addTextChangedListener(textWatcher);
             holder.text.addTextChangedListener(textWatcher);
             holder.text.setOnFocusChangeListener(textFocusListener);
-            //holder.deleteButton.setOnClickListener(deleteListener);
             holder.select.setOnClickListener(clickListener);
 
         if (selectedCards.contains(currentCard.id)) {
@@ -251,6 +266,37 @@ public class CardQuickEditAdapter extends RecyclerView.Adapter<CardQuickEditAdap
 
         if (selectedCards.isEmpty())
             hideActions();
+
+        holder.popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId())
+                {
+                    case R.id.delete_card:
+                        AlertDialog.Builder deleteDialog = new AlertDialog.Builder(MainActivity.activityContext());
+                        deleteDialog.setMessage(R.string.card_delete_message);
+                        deleteDialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Card c = new Card();
+                                c.id = mDataset.get(position).id;
+                                MainActivity.db.removeCard(c);
+                                MainActivity.db.editPage(MainActivity.allPagesList.get(pageId));
+                                updateState();
+                            }
+                        });
+                        deleteDialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        });
+                        deleteDialog.create().show();
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
     public void showActions()
