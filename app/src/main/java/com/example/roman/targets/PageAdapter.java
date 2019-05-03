@@ -45,9 +45,6 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
     @Override
     public void onBindViewHolder(final PageAdapterViewHolder holder, final int position) {
 
-
-
-
         if (MainActivity.section == MainActivity.Section.Personal) {
             PersonalFragment pf = (PersonalFragment)MainActivity.activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
             pf.checkPages();
