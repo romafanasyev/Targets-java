@@ -235,10 +235,13 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
 
                 @Override
                 public void afterTextChanged(Editable s) {
+
                     currentCard.title = holder.title.getText().toString();
                     currentCard.text = holder.text.getText().toString();
                     MainActivity.db.editCard(currentCard);
-                    if(currentCard.title.equals("") || currentCard.text.equals("")){
+
+                    if(currentCard.title.equals("") && currentCard.text.equals("")) {
+
                         MainActivity.db.removeCard(currentCard);
                     }
                 }
