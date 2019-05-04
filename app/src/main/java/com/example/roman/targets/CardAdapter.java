@@ -243,7 +243,10 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                     if(currentCard.title.equals("") && currentCard.text.equals("")) {
 
                         MainActivity.db.removeCard(currentCard);
+                        updateState();
                     }
+
+
                 }
             };
             // changing view size on focus

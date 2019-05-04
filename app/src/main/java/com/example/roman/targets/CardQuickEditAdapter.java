@@ -225,7 +225,16 @@ public class CardQuickEditAdapter extends RecyclerView.Adapter<CardQuickEditAdap
                     currentCard.title = holder.title.getText().toString();
                     currentCard.text = holder.text.getText().toString();
                     MainActivity.db.editCard(currentCard);
+
+                    if(currentCard.title.equals("") && currentCard.text.equals("")) {
+
+                        MainActivity.db.removeCard(currentCard);
+                        updateState();
+                    }
+
+
                 }
+
             };
             // changing view size on focus
             View.OnFocusChangeListener textFocusListener = new View.OnFocusChangeListener() {
