@@ -54,7 +54,7 @@ public class CardEditFragment extends Fragment {
 
     public RecyclerView mRecyclerView;
     CardAdapter mAdapter;
-    RecyclerView.LayoutManager mLayoutManager;
+    StaggeredGridLayoutManager mLayoutManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

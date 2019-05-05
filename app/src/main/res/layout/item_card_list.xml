@@ -8,7 +8,14 @@
     android:layout_margin="3dp"
     android:padding="12dp">
 
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimary" />
+
     <LinearLayout
+        android:id="@+id/card_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -95,28 +102,29 @@
             android:id="@+id/card_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/transparent"
             android:hint="@string/title"
             android:inputType="textCapSentences"
             android:minLines="1"
             android:scrollbars="vertical"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:backgroundTint="@color/transparent"/>
+            android:textStyle="bold" />
+
         <EditText
             android:id="@+id/add_point"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/transparent"
             android:hint="@string/add_point"
             android:inputType="textCapSentences"
             android:minLines="1"
             android:scrollbars="vertical"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:backgroundTint="@color/transparent"/>
+            android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

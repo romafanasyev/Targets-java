@@ -8,7 +8,14 @@
     app:cardCornerRadius="6dp"
     app:cardElevation="3dp">
 
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimary" />
+
     <LinearLayout
+        android:id="@+id/card_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -101,23 +108,23 @@
             android:id="@+id/card_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/transparent"
             android:hint="@string/title"
             android:inputType="textCapSentences"
             android:minLines="1"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:backgroundTint="@color/transparent"/>
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/card_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/transparent"
             android:gravity="top"
             android:inputType="textCapSentences|textMultiLine"
             android:minLines="1"
             android:scrollbars="vertical"
-            android:textSize="18sp"
-            android:backgroundTint="@color/transparent"/>
+            android:textSize="18sp" />
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

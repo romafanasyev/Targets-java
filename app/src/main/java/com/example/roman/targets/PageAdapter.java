@@ -38,7 +38,6 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
     private ArrayList<Page> mDataset;
     private PageAdapter pageAdapter = this;
     private String newPage; //when page title set to empty (do like that cuz need to access string resources)
-    OnStartDragListener mDragStartListener;
 
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -67,10 +66,10 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
             holder.mTextView.setText(mDataset.get(position).title);
 
             //show category or not
-            if (MainActivity.allPagesList.get(position).category) {
+            if (mDataset.get(position).category) {
                 holder.mDivider.setVisibility(View.VISIBLE);
                 holder.mCategory.setVisibility(View.VISIBLE);
-                holder.mCategory.setText(MainActivity.allPagesList.get(position).category_name);
+                holder.mCategory.setText(mDataset.get(position).category_name);
             } else {
                 holder.mDivider.setVisibility(View.GONE);
                 holder.mCategory.setVisibility(View.GONE);
@@ -84,11 +83,11 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
 
                     boolean quickEditEnabled = sharedPref.getBoolean("quickEdit", false);
                     if (quickEditEnabled) {
-                        CardQuickEditFragment cardQuickEditFragment = CardQuickEditFragment.newInstance(MainActivity.allPagesList.get(position).id);
+                        CardQuickEditFragment cardQuickEditFragment = CardQuickEditFragment.newInstance(mDataset.get(position).id);
                         MainActivity.activity.navigate(cardQuickEditFragment);
                     }
                     else {
-                        CardsFragment cardsFragment = CardsFragment.newInstance(MainActivity.allPagesList.get(position).id);
+                        CardsFragment cardsFragment = CardsFragment.newInstance(mDataset.get(position).id);
                         MainActivity.activity.navigate(cardsFragment);
                     }
                 }
@@ -190,7 +189,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                                     }
 
                                     MainActivity.db.removePage(MainActivity.allPagesList.get(holder.getAdapterPosition()));
-                                    MainActivity.allPagesList.remove(holder.getAdapterPosition());
+                                    mDataset.remove(holder.getAdapterPosition());
 
                                     pageAdapter.notifyDataSetChanged();
                                 }
@@ -250,11 +249,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
         return vh;
     }
 
-    @Override
-    public void onItemDismiss(int position) {
-        mDataset.remove(position);
-        notifyItemRemoved(position);
-    }
+
 
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {

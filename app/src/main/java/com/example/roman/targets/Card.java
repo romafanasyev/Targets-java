@@ -6,8 +6,8 @@ public class Card {
     String title;
     String text;
     int pageid;
+    boolean isDivider = false;
 
-    //TODO: change constructor
     Card(int id, int pageid, String title, String text)
     {
         this.id = id;
@@ -22,5 +22,20 @@ public class Card {
     enum CardType
     {
         Note, List, Question, Deadline
+    }
+    public String getType()
+    {
+        switch (type)
+        {
+            case Note:
+                return "note";
+            case List:
+                return "list";
+            case Deadline:
+                return "deadline";
+            case Question:
+                return "question";
+        }
+        return "stupid compilator";
     }
 }

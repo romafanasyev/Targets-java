@@ -22,36 +22,47 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
-import java.util.logging.Logger;
+import java.util.Collections;
+import java.util.Comparator;
 
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
-
-import com.google.android.material.tabs.TabLayout;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import static com.example.roman.targets.MainActivity.activity;
-import static com.example.roman.targets.MainActivity.switchQuickEditMode;
+import static com.example.roman.targets.MainActivity.allPagesList;
+import static com.example.roman.targets.MainActivity.db;
 
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterViewHolder> {
+
     private int pageId;
+    boolean selectCard = true;
     private int selectedCardPosition;
     public boolean editMode;
-    String TAG = "myDebug";
+
+    private static final int TYPE_DIVIDER = 1;
+    private static final int TYPE_NOT_A_DIVIDER = 0;
 
     public ArrayList<Card> mDataset;
     private boolean selectionMode = false;
     ArrayList<Integer> selectedCards = new ArrayList<>();
 
+    public CardAdapter(int pageId, boolean editMode, int selectedCardPosition) {
+        this.pageId = pageId;
+        this.editMode = editMode;
+        this.selectedCardPosition = selectedCardPosition;
+        mDataset = db.findPageCards(pageId);
+    }
+
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     public static class CardAdapterViewHolder extends RecyclerView.ViewHolder {
+        View divider;
+        LinearLayout content;
+
         TextView mTitle;
         TextView mText;
 
@@ -64,6 +75,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
 
         public CardAdapterViewHolder(CardView v) {
             super(v);
+            divider = v.findViewById(R.id.divider);
+            content = v.findViewById(R.id.card_content);
+
             mTitle = v.findViewById(R.id.card_m_title);
             mText = v.findViewById(R.id.card_m_text);
 
@@ -148,20 +162,32 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
 
     // Create new views (invoked by the layout manager)
     @Override
-    public CardAdapter.CardAdapterViewHolder onCreateViewHolder(ViewGroup parent,
-                                                                int viewType) {
+    public CardAdapter.CardAdapterViewHolder onCreateViewHolder(final ViewGroup parent,
+                                                                final int viewType) {
         // create a new view
-        CardView v = (CardView) LayoutInflater.from(parent.getContext())
+        final CardView v = (CardView) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_card_note, parent, false);
+        v.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                final ViewGroup.LayoutParams lp = v.getLayoutParams();
+                if (lp instanceof StaggeredGridLayoutManager.LayoutParams) {
+                    StaggeredGridLayoutManager.LayoutParams sglp =
+                            (StaggeredGridLayoutManager.LayoutParams) lp;
+                    if (viewType == TYPE_DIVIDER) {
+                        sglp.setFullSpan(true);
+                        v.setLayoutParams(sglp);
+                        final StaggeredGridLayoutManager lm =
+                                (StaggeredGridLayoutManager) ((RecyclerView) parent).getLayoutManager();
+                        lm.invalidateSpanAssignments();
+                    }
+                }
+                v.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        });
         CardAdapterViewHolder vh = new CardAdapterViewHolder(v);
         return vh;
-    }
-
-    public CardAdapter(int pageId, boolean editMode, int selectedCardPosition) {
-        this.pageId = pageId;
-        this.editMode = editMode;
-        this.selectedCardPosition = selectedCardPosition;
-        mDataset = MainActivity.db.findPageCards(pageId);
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -170,15 +196,15 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         return mDataset.size();
     }
 
+    Card currentCard;
+    Card previousCard;
+
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final CardAdapterViewHolder holder, final int position) {
         Fragment f = activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
         if (f instanceof CardsFragment)
             ((CardsFragment)f).checkCards();
-
-        final Card currentCard = mDataset.get(position);
-        holder.cardMenu.setVisibility(View.GONE);
 
         // select card
         View.OnClickListener clickListener = new View.OnClickListener() {
@@ -213,6 +239,20 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             }
         };
 
+
+        currentCard = mDataset.get(position);
+        if (position != 0 ) previousCard = mDataset.get(position-1);
+
+        if (currentCard.isDivider)
+        {
+            for (int i=0; i<holder.content.getChildCount(); i++)
+                    holder.content.getChildAt(i).setVisibility(View.GONE);
+            holder.divider.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        holder.cardMenu.setVisibility(View.GONE);
+        if (!currentCard.isDivider) holder.divider.setVisibility(View.GONE);
         if (editMode)
         {
             holder.mTitle.setVisibility(View.GONE);
@@ -237,7 +277,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                 public void afterTextChanged(Editable s) {
                     currentCard.title = holder.title.getText().toString();
                     currentCard.text = holder.text.getText().toString();
-                    MainActivity.db.editCard(currentCard);
+                    db.editCard(currentCard);
                 }
             };
             // changing view size on focus
@@ -267,7 +307,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             holder.text.addTextChangedListener(textWatcher);
             holder.text.setOnFocusChangeListener(textFocusListener);
 
-            if (position == selectedCardPosition) {
+            if (position == selectedCardPosition && selectCard) {
                 holder.text.requestFocus();
                 InputMethodManager imgr = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
@@ -283,7 +323,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
 
             holder.title.setVisibility(View.GONE);
             holder.text.setVisibility(View.GONE);
-            holder.cardMenu.setVisibility(View.GONE);
 
             holder.mTitle.setText(currentCard.title);
             holder.mText.setText(currentCard.text);
@@ -305,6 +344,38 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
 
         holder.itemView.findViewById(R.id.card_check).setVisibility(View.GONE);
 
+        holder.b4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (position != 0) {
+                    if (previousCard.isDivider) {
+                        db.removeCard(previousCard);
+                        mDataset.remove(position-1);
+                        updateState();
+                    }
+                    else {
+                        Card div = new Card(MainActivity.db.cardTableSize(), pageId, "", "");
+                        div.isDivider = true;
+                        db.addCard(div);
+                        allPagesList.get(pageId).cards.add(position, div.id);
+                        db.editPage(allPagesList.get(pageId));
+                        updateState();
+                        selectCard = false;
+                    }
+                }
+                else {
+                    Card div = new Card(MainActivity.db.cardTableSize(), pageId, "", "");
+                    div.isDivider = true;
+                    db.addCard(div);
+                    allPagesList.get(pageId).cards.add(position, div.id);
+                    db.editPage(allPagesList.get(pageId));
+
+                    updateState();
+                    selectCard = false;
+                }
+            }
+        });
+
         holder.popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -317,9 +388,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Card c = new Card();
-                                c.id = mDataset.get(position).id;
-                                MainActivity.db.removeCard(c);
-                                MainActivity.db.editPage(MainActivity.allPagesList.get(pageId));
+                                c.id = currentCard.id;
+                                db.removeCard(c);
+                                db.editPage(MainActivity.allPagesList.get(pageId));
                                 updateState();
                             }
                         });
@@ -365,20 +436,32 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         for (int i = 0; i < selectedCards.size(); i++) {
             Card c = new Card();
             c.id = selectedCards.get(i);
-            MainActivity.db.removeCard(c);
-            MainActivity.db.editPage(MainActivity.allPagesList.get(pageId));
+            db.removeCard(c);
+            db.editPage(MainActivity.allPagesList.get(pageId));
         }
         updateState();
     }
 
     public void updateState() {
-        mDataset = MainActivity.db.findPageCards(pageId);
+        mDataset = db.findPageCards(pageId);
         notifyDataSetChanged();
         hideActions();
+        Log.d("myDebug", allPagesList.get(pageId).cards+" (db)");
+        StringBuilder s = new StringBuilder();
+        for (int i=0; i<mDataset.size(); i++)
+            s.append(mDataset.get(i).id);
+        Log.d("myDebug", s.toString()+" (dataSet)");
     }
     private static MoveCopyDialogFragment c;
     public static void dismissDialog()
     {
         c.dismiss();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (mDataset.get(position).isDivider)
+            return TYPE_DIVIDER;
+        else return TYPE_NOT_A_DIVIDER;
     }
 }

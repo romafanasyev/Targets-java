@@ -30,6 +30,14 @@ public class DBHelper extends SQLiteOpenHelper {
         public static final String COLUMN_CARDS="cards";
         public static final String COLUMN_SECTION="section";
     }
+    public static class CardsTable implements BaseColumns {
+        public static final String TABLE_NAME = "cards_table";
+        public static final String COLUMN_ID = "id";
+        public static final String COLUMN_TEXT = "text";
+        public static final String COLUMN_TITLE = "title";
+        public static final String COLUMN_PAGE_ID = "page_id";
+        public static final String COLUMN_DIVIDER="divider";
+    }
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -57,19 +65,58 @@ public class DBHelper extends SQLiteOpenHelper {
                 CardsTable.COLUMN_ID + " INTEGER, " +
                 DBHelper.CardsTable.COLUMN_TEXT + " TEXT, " +
                 DBHelper.CardsTable.COLUMN_TITLE + " TEXT, " +
-                DBHelper.CardsTable.COLUMN_PAGE_ID + " TEXT " +
+                DBHelper.CardsTable.COLUMN_PAGE_ID + " TEXT, " +
+                CardsTable.COLUMN_DIVIDER + " BOOLEAN " +
                 ")";
         db.execSQL(SQL_CREATE_CARDS_TABLE);
     }
-
     public void addCard(Card card) {
         ContentValues cv = new ContentValues();
         cv.put(CardsTable.COLUMN_ID, card.id);
         cv.put(CardsTable.COLUMN_TEXT, card.text);
         cv.put(CardsTable.COLUMN_TITLE, card.title);
         cv.put(CardsTable.COLUMN_PAGE_ID, card.pageid);
+        cv.put(CardsTable.COLUMN_DIVIDER, card.isDivider);
         db.insert(CardsTable.TABLE_NAME, null, cv);
     }
+    public int editCard(Card card) {
+        ContentValues cv = new ContentValues();
+        cv.put(CardsTable.COLUMN_TEXT, card.text);
+        cv.put(CardsTable.COLUMN_TITLE, card.title);
+        cv.put(CardsTable.COLUMN_PAGE_ID, card.pageid);
+        cv.put(CardsTable.COLUMN_DIVIDER, card.isDivider);
+
+        return db.update(CardsTable.TABLE_NAME, cv, CardsTable.COLUMN_ID + " = ?",
+                new String[]{String.valueOf(card.id)});
+    }
+    public void removeCard(Card card) {
+        db.delete(CardsTable.TABLE_NAME, CardsTable.COLUMN_ID + " = ?", new String[]{Integer.toString(card.id)});
+    }
+    public ArrayList<Card> findPageCards(int pageId) {
+        ArrayList<Card> list = new ArrayList<>();
+        Cursor c = db.rawQuery("SELECT * FROM " + CardsTable.TABLE_NAME + " WHERE " + CardsTable.COLUMN_PAGE_ID + "=?", new String[]{pageId+""});
+        if (c.moveToFirst() && cardTableSize() > 0) {
+            do {
+                Card card = new Card();
+                card.id = c.getInt(c.getColumnIndex(CardsTable.COLUMN_ID));
+                card.pageid = c.getInt(c.getColumnIndex(CardsTable.COLUMN_PAGE_ID));
+                card.title = c.getString(c.getColumnIndex(CardsTable.COLUMN_TITLE));
+                card.text = c.getString(c.getColumnIndex(CardsTable.COLUMN_TEXT));
+                card.isDivider = c.getInt(c.getColumnIndex(CardsTable.COLUMN_DIVIDER)) > 0;
+                list.add(card);
+            } while (c.moveToNext());
+        }
+        c.close();
+        return list;
+    }
+    public int cardTableSize()
+    {
+        Cursor c = db.rawQuery("SELECT * FROM " + CardsTable.TABLE_NAME, null);
+        int res = c.getCount();
+        c.close();
+        return res;
+    }
+//--------------------------P-A-G-E-S----------------------------------------------------------------------------------------------
 
     public void addPage(Page page) {
         ContentValues cv = new ContentValues();
@@ -91,45 +138,6 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert(PagesTable.TABLE_NAME, null, cv);
     }
 
-    public int editCard(Card card) {
-        ContentValues cv = new ContentValues();
-        cv.put(CardsTable.COLUMN_TEXT, card.text);
-        cv.put(CardsTable.COLUMN_TITLE, card.title);
-        cv.put(CardsTable.COLUMN_PAGE_ID, card.pageid);
-
-        return db.update(CardsTable.TABLE_NAME, cv, CardsTable.COLUMN_ID + " = ?",
-                new String[]{String.valueOf(card.id)});
-    }
-
-    public void removeCard(Card card) {
-        db.delete(CardsTable.TABLE_NAME, CardsTable.COLUMN_ID + " = ?", new String[]{Integer.toString(card.id)});
-    }
-
-    public ArrayList<Card> findPageCards(int pageId) {
-        ArrayList<Card> list = new ArrayList<>();
-        Cursor c = db.rawQuery("SELECT * FROM " + CardsTable.TABLE_NAME + " WHERE " + CardsTable.COLUMN_PAGE_ID + "=?", new String[]{pageId+""});
-        if (c.moveToFirst() && cardTableSize() > 0) {
-            do {
-                Card card = new Card();
-                card.id = c.getInt(c.getColumnIndex(CardsTable.COLUMN_ID));
-                card.pageid = c.getInt(c.getColumnIndex(CardsTable.COLUMN_PAGE_ID));
-                card.title = c.getString(c.getColumnIndex(CardsTable.COLUMN_TITLE));
-                card.text = c.getString(c.getColumnIndex(CardsTable.COLUMN_TEXT));
-                list.add(card);
-            } while (c.moveToNext());
-        }
-        c.close();
-        return list;
-    }
-
-    public static class CardsTable implements BaseColumns {
-        public static final String TABLE_NAME = "cards_table";
-        public static final String COLUMN_ID = "id";
-        public static final String COLUMN_TEXT = "text";
-        public static final String COLUMN_TITLE = "title";
-        public static final String COLUMN_PAGE_ID = "page_id";
-    }
-
     public int editPage(Page page) {
         ContentValues cv = new ContentValues();
         cv.put(PagesTable.COLUMN_CATEGORY, page.getCategory());
@@ -145,6 +153,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         String putCards = json.toString();
         cv.put(PagesTable.COLUMN_CARDS, putCards);
+
         return db.update(PagesTable.TABLE_NAME, cv, PagesTable.COLUMN_ID + " = ?",
                 new String[]{String.valueOf(page.id)});
     }
@@ -178,25 +187,17 @@ public class DBHelper extends SQLiteOpenHelper {
                 JSONObject json = null;
                 try {
                     json = new JSONObject(c.getString(c.getColumnIndex(PagesTable.COLUMN_CARDS)));
+                    JSONArray cards = json.optJSONArray("page_cards");
+                    for (int i = 0; i < cards.length(); i++) {
+                        page.cards.add(cards.optInt(i));
+                    }
+                    pageList.add(page);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                JSONArray cards = json.optJSONArray("page_cards");
-                for (int i = 0; i < cards.length(); i++) {
-                    page.cards.add(cards.optInt(i));
-                }
-                pageList.add(page);
             } while (c.moveToNext());
         }
         c.close();
         return pageList;
-    }
-
-    public int cardTableSize()
-    {
-        Cursor c = db.rawQuery("SELECT * FROM " + CardsTable.TABLE_NAME, null);
-        int res = c.getCount();
-        c.close();
-        return res;
     }
 }
