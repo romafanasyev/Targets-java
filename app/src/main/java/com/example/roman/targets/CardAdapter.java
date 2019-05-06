@@ -358,6 +358,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                         div.isDivider = true;
                         db.addCard(div);
                         allPagesList.get(pageId).cards.add(position, div.id);
+                        mDataset.add(position, div);
+                        notifyItemInserted(position);
                         db.editPage(allPagesList.get(pageId));
                         updateState();
                         selectCard = false;
@@ -368,9 +370,10 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                     div.isDivider = true;
                     db.addCard(div);
                     allPagesList.get(pageId).cards.add(position, div.id);
+                    mDataset.add(position, div);
+                    notifyItemInserted(position);
                     db.editPage(allPagesList.get(pageId));
-
-                    updateState();
+                    //updateState();
                     selectCard = false;
                 }
             }
