@@ -76,21 +76,21 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:backgroundTint="@color/transparent"/>
-            <EditText
+
+            <Button
                 android:id="@+id/add_point"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/add_point"
-                android:inputType="textCapSentences"
-                android:minLines="1"
-                android:scrollbars="vertical"
+                android:backgroundTint="@color/transparent"
+                android:text="@string/add_point"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                android:backgroundTint="@color/transparent"/>
+                android:textAllCaps="false"
+                android:textAlignment="textStart"/>
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/point_rv"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>
 

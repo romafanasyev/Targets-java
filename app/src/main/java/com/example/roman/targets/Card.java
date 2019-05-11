@@ -1,7 +1,12 @@
 package com.example.roman.targets;
 
 public class Card {
-    CardType type;
+    static final int TYPE_NOTE = 1;
+    static final int TYPE_LIST = 2;
+    static final int TYPE_DEADLINE = 3;
+    static final int TYPE_QUESTION = 4;
+
+    int type;
     int id;
     String title;
     String text;
@@ -15,27 +20,16 @@ public class Card {
         this.title = title;
         this.text = text;
     }
+    Card(int id, int pageid, String title, String text, int type)
+    {
+        this.id = id;
+        this.pageid = pageid;
+        this.title = title;
+        this.text = text;
+        this.type = type;
+    }
     Card(){
 
     }
 
-    enum CardType
-    {
-        Note, List, Question, Deadline
-    }
-    public String getType()
-    {
-        switch (type)
-        {
-            case Note:
-                return "note";
-            case List:
-                return "list";
-            case Deadline:
-                return "deadline";
-            case Question:
-                return "question";
-        }
-        return "stupid compilator";
-    }
 }

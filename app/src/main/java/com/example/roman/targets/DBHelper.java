@@ -37,6 +37,7 @@ public class DBHelper extends SQLiteOpenHelper {
         public static final String COLUMN_TITLE = "title";
         public static final String COLUMN_PAGE_ID = "page_id";
         public static final String COLUMN_DIVIDER="divider";
+        public static final String COLUMN_TYPE="type";
     }
 
     public DBHelper(Context context) {
@@ -66,7 +67,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 DBHelper.CardsTable.COLUMN_TEXT + " TEXT, " +
                 DBHelper.CardsTable.COLUMN_TITLE + " TEXT, " +
                 DBHelper.CardsTable.COLUMN_PAGE_ID + " TEXT, " +
-                CardsTable.COLUMN_DIVIDER + " BOOLEAN " +
+                CardsTable.COLUMN_DIVIDER + " BOOLEAN, " +
+                CardsTable.COLUMN_TYPE + " INTEGER " +
                 ")";
         db.execSQL(SQL_CREATE_CARDS_TABLE);
     }
@@ -77,6 +79,7 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(CardsTable.COLUMN_TITLE, card.title);
         cv.put(CardsTable.COLUMN_PAGE_ID, card.pageid);
         cv.put(CardsTable.COLUMN_DIVIDER, card.isDivider);
+        cv.put(CardsTable.COLUMN_TYPE, card.isDivider);
         db.insert(CardsTable.TABLE_NAME, null, cv);
     }
     public int editCard(Card card) {
@@ -103,6 +106,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 card.title = c.getString(c.getColumnIndex(CardsTable.COLUMN_TITLE));
                 card.text = c.getString(c.getColumnIndex(CardsTable.COLUMN_TEXT));
                 card.isDivider = c.getInt(c.getColumnIndex(CardsTable.COLUMN_DIVIDER)) > 0;
+                card.type = c.getInt(c.getColumnIndex(CardsTable.COLUMN_TYPE));
                 list.add(card);
             } while (c.moveToNext());
         }
