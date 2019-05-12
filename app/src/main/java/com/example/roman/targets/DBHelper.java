@@ -38,6 +38,8 @@ public class DBHelper extends SQLiteOpenHelper {
         public static final String COLUMN_PAGE_ID = "page_id";
         public static final String COLUMN_DIVIDER="divider";
         public static final String COLUMN_TYPE="type";
+        public static final String COLUMN_QUESTIONS="questions";
+        public static final String COLUMN_LINKS="links";
     }
 
     public DBHelper(Context context) {
@@ -68,7 +70,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 DBHelper.CardsTable.COLUMN_TITLE + " TEXT, " +
                 DBHelper.CardsTable.COLUMN_PAGE_ID + " TEXT, " +
                 CardsTable.COLUMN_DIVIDER + " BOOLEAN, " +
-                CardsTable.COLUMN_TYPE + " INTEGER " +
+                CardsTable.COLUMN_TYPE + " INTEGER, " +
+                CardsTable.COLUMN_QUESTIONS + " STRING, " +
+                CardsTable.COLUMN_LINKS + " STRING " +
                 ")";
         db.execSQL(SQL_CREATE_CARDS_TABLE);
     }
@@ -80,6 +84,22 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(CardsTable.COLUMN_PAGE_ID, card.pageid);
         cv.put(CardsTable.COLUMN_DIVIDER, card.isDivider);
         cv.put(CardsTable.COLUMN_TYPE, card.isDivider);
+        JSONObject json = new JSONObject();
+        try {
+            json.put("card_questions", new JSONArray(card.questions));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String putQuestions = json.toString();
+        cv.put(CardsTable.COLUMN_QUESTIONS, putQuestions);
+        json = new JSONObject();
+        try {
+            json.put("card_links", new JSONArray(card.links));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String putLinks = json.toString();
+        cv.put(CardsTable.COLUMN_LINKS, putLinks);
         db.insert(CardsTable.TABLE_NAME, null, cv);
     }
     public int editCard(Card card) {
@@ -88,6 +108,22 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(CardsTable.COLUMN_TITLE, card.title);
         cv.put(CardsTable.COLUMN_PAGE_ID, card.pageid);
         cv.put(CardsTable.COLUMN_DIVIDER, card.isDivider);
+        JSONObject json = new JSONObject();
+        try {
+            json.put("card_questions", new JSONArray(card.questions));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String putQuestions = json.toString();
+        cv.put(CardsTable.COLUMN_QUESTIONS, putQuestions);
+        json = new JSONObject();
+        try {
+            json.put("card_links", new JSONArray(card.questions));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String putLinks = json.toString();
+        cv.put(CardsTable.COLUMN_QUESTIONS, putLinks);
 
         return db.update(CardsTable.TABLE_NAME, cv, CardsTable.COLUMN_ID + " = ?",
                 new String[]{String.valueOf(card.id)});
@@ -107,6 +143,26 @@ public class DBHelper extends SQLiteOpenHelper {
                 card.text = c.getString(c.getColumnIndex(CardsTable.COLUMN_TEXT));
                 card.isDivider = c.getInt(c.getColumnIndex(CardsTable.COLUMN_DIVIDER)) > 0;
                 card.type = c.getInt(c.getColumnIndex(CardsTable.COLUMN_TYPE));
+                card.questions = card.links = new ArrayList<>();
+                /*JSONObject json = null;
+                try {
+                    json = new JSONObject(c.getString(c.getColumnIndex(CardsTable.COLUMN_QUESTIONS)));
+                    JSONArray questions = json.optJSONArray("card_questions");
+                    for (int i = 0; i < questions.length(); i++) {
+                        card.questions.add(questions.optInt(i));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    json = new JSONObject(c.getString(c.getColumnIndex(CardsTable.COLUMN_LINKS)));
+                    JSONArray links = json.optJSONArray("card_links");
+                    for (int i = 0; i < links.length(); i++) {
+                        card.links.add(links.optInt(i));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }*/
                 list.add(card);
             } while (c.moveToNext());
         }

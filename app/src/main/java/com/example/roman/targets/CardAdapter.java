@@ -210,6 +210,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (position != 0 ) previousCard = mDataset.get(position-1);
                 if (selectionMode) {
                     if (!selectedCards.contains(currentCard.id))
                         selectedCards.add(currentCard.id);
@@ -238,10 +239,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                 return true;
             }
         };
-
-
         currentCard = mDataset.get(position);
-        if (position != 0 ) previousCard = mDataset.get(position-1);
+        if (position!=0) previousCard = mDataset.get(position-1);
 
         if (currentCard.isDivider)
         {
@@ -277,15 +276,13 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                 public void afterTextChanged(Editable s) {
                     currentCard.title = holder.title.getText().toString();
                     currentCard.text = holder.text.getText().toString();
-                    MainActivity.db.editCard(currentCard);
+                    db.editCard(currentCard);
 
                     if(currentCard.title.equals("") && currentCard.text.equals("")) {
 
-                        MainActivity.db.removeCard(currentCard);
+                        db.removeCard(currentCard);
                         updateState();
                     }
-
-
                 }
             };
             // changing view size on focus
@@ -356,29 +353,31 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             @Override
             public void onClick(View v) {
                 if (position != 0) {
+                    previousCard = mDataset.get(position-1);
                     if (previousCard.isDivider) {
                         db.removeCard(previousCard);
                         mDataset.remove(position-1);
-                        updateState();
+                        notifyItemRemoved(position-1);
                     }
                     else {
-                        Card div = new Card(MainActivity.db.cardTableSize(), pageId, "", "");
+                        Card div = new Card(db.cardTableSize(), pageId, "", "");
                         div.isDivider = true;
+                        mDataset.add(position, div);
+                        notifyItemInserted(position);
                         db.addCard(div);
                         allPagesList.get(pageId).cards.add(position, div.id);
                         db.editPage(allPagesList.get(pageId));
-                        updateState();
                         selectCard = false;
                     }
                 }
                 else {
-                    Card div = new Card(MainActivity.db.cardTableSize(), pageId, "", "");
+                    Card div = new Card(db.cardTableSize(), pageId, "", "");
                     div.isDivider = true;
+                    mDataset.add(position, div);
+                    notifyItemInserted(position);
                     db.addCard(div);
                     allPagesList.get(pageId).cards.add(position, div.id);
                     db.editPage(allPagesList.get(pageId));
-
-                    updateState();
                     selectCard = false;
                 }
             }
@@ -398,7 +397,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                                 Card c = new Card();
                                 c.id = currentCard.id;
                                 db.removeCard(c);
-                                db.editPage(MainActivity.allPagesList.get(pageId));
+                                db.editPage(allPagesList.get(pageId));
                                 updateState();
                             }
                         });
@@ -451,16 +450,20 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
     }
 
     public void updateState() {
-        mDataset = db.findPageCards(pageId);
+        mDataset.clear();
+        mDataset.addAll(db.findPageCards(pageId));
         notifyDataSetChanged();
         hideActions();
+
         Log.d("myDebug", allPagesList.get(pageId).cards+" (db)");
         StringBuilder s = new StringBuilder();
         for (int i=0; i<mDataset.size(); i++)
             s.append(mDataset.get(i).id);
         Log.d("myDebug", s.toString()+" (dataSet)");
     }
+
     private static MoveCopyDialogFragment c;
+
     public static void dismissDialog()
     {
         c.dismiss();

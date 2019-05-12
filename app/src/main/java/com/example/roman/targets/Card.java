@@ -1,5 +1,7 @@
 package com.example.roman.targets;
 
+import java.util.ArrayList;
+
 public class Card {
     static final int TYPE_NOTE = 1;
     static final int TYPE_LIST = 2;
@@ -12,6 +14,9 @@ public class Card {
     String text;
     int pageid;
     boolean isDivider = false;
+
+    ArrayList<Integer> questions = new ArrayList<>();
+    ArrayList<Integer> links = new ArrayList<>();
 
     Card(int id, int pageid, String title, String text)
     {
