@@ -57,13 +57,19 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
         // - replace the contents of the view with that element
 
         //shows pages relative to current section
+
         if (mDataset.get(position).section != MainActivity.currentSection || mDataset.get(position).id == 0)
         {
             holder.itemView.setVisibility(View.GONE);
             holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0,0));
         }
-        else {
+
+        else
+            {
+
             holder.mTextView.setText(mDataset.get(position).title);
+            holder.pageAvatar.setText(mDataset.get(position).title.substring(0,1));
+
 
             //show category or not
             if (mDataset.get(position).category) {
@@ -259,6 +265,8 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
     }
 
     public static class PageAdapterViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView pageAvatar;
         public TextView mTextView;
         public ImageButton mButton;
         public PopupMenu popupMenu;
@@ -268,14 +276,16 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
 
 
         public PageAdapterViewHolder(View v, boolean section) {
+
             super(v);
+            pageAvatar = v.findViewById(R.id.page_avatar);
             mTextView = v.findViewById(R.id.pagename);
             mButton = v.findViewById(R.id.pageActionButton);
             popupMenu = new PopupMenu(MainActivity.applicationContext(), mButton);
             popupMenu.getMenuInflater().inflate(R.menu.page, popupMenu.getMenu());
             popupMenu.getMenu().getItem(3).setTitle(MainActivity.activity.getResources().getString(R.string.move_to) + " " + (section ? MainActivity.activity.getResources().getString(R.string.title_work) : MainActivity.activity.getResources().getString(R.string.title_personal)));
 
-               mButton.setOnClickListener(new View.OnClickListener() {
+            mButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     popupMenu.show();
