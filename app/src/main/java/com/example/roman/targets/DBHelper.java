@@ -82,8 +82,8 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(CardsTable.COLUMN_TEXT, card.text);
         cv.put(CardsTable.COLUMN_TITLE, card.title);
         cv.put(CardsTable.COLUMN_PAGE_ID, card.pageid);
-        cv.put(CardsTable.COLUMN_DIVIDER, card.isDivider);
-        cv.put(CardsTable.COLUMN_TYPE, card.isDivider);
+        cv.put(CardsTable.COLUMN_DIVIDER, card.hasDivider);
+        cv.put(CardsTable.COLUMN_TYPE, card.hasDivider);
         JSONObject json = new JSONObject();
         try {
             json.put("card_questions", new JSONArray(card.questions));
@@ -107,7 +107,7 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(CardsTable.COLUMN_TEXT, card.text);
         cv.put(CardsTable.COLUMN_TITLE, card.title);
         cv.put(CardsTable.COLUMN_PAGE_ID, card.pageid);
-        cv.put(CardsTable.COLUMN_DIVIDER, card.isDivider);
+        cv.put(CardsTable.COLUMN_DIVIDER, card.hasDivider);
         JSONObject json = new JSONObject();
         try {
             json.put("card_questions", new JSONArray(card.questions));
@@ -141,7 +141,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 card.pageid = c.getInt(c.getColumnIndex(CardsTable.COLUMN_PAGE_ID));
                 card.title = c.getString(c.getColumnIndex(CardsTable.COLUMN_TITLE));
                 card.text = c.getString(c.getColumnIndex(CardsTable.COLUMN_TEXT));
-                card.isDivider = c.getInt(c.getColumnIndex(CardsTable.COLUMN_DIVIDER)) > 0;
+                card.hasDivider = c.getInt(c.getColumnIndex(CardsTable.COLUMN_DIVIDER)) > 0;
                 card.type = c.getInt(c.getColumnIndex(CardsTable.COLUMN_TYPE));
                 card.questions = card.links = new ArrayList<>();
                 /*JSONObject json = null;

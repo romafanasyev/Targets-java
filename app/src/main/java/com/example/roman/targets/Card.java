@@ -13,7 +13,8 @@ public class Card {
     String title;
     String text;
     int pageid;
-    boolean isDivider = false;
+    boolean hasDivider = false;
+    boolean divider = false;
 
     ArrayList<Integer> questions = new ArrayList<>();
     ArrayList<Integer> links = new ArrayList<>();
