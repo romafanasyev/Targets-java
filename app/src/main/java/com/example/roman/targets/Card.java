@@ -18,6 +18,7 @@ public class Card {
 
     ArrayList<Integer> questions = new ArrayList<>();
     ArrayList<Integer> links = new ArrayList<>();
+    ArrayList<Point> points = new ArrayList<>();
 
     Card(int id, int pageid, String title, String text)
     {
