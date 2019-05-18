@@ -29,6 +29,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -82,7 +83,7 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
         String section;
         if (pageID !=0)
             section = MainActivity.allPagesList.get(pageID).section ? getResources().getString(R.string.title_personal) + " \\ " : getResources().getString(R.string.title_work) + " \\ ";
-        else section = getString(R.string.title_main);
+        else section = "Targets";
         title.setText(section + MainActivity.allPagesList.get(pageID).title);
 
         // use this setting to improve performance if you know that changes
@@ -139,6 +140,18 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
                                     d.findViewById(R.id.list_layout).setVisibility(View.VISIBLE);
                                     d.findViewById(R.id.question_layout).setVisibility(View.GONE);
                                     d.findViewById(R.id.deadline_layout).setVisibility(View.GONE);
+                                    final RecyclerView rv = d.findViewById(R.id.point_rv);
+                                    rv.setLayoutManager(new LinearLayoutManager(getContext()));
+                                    rv.setAdapter(new PointAdapter(true));
+                                    d.findViewById(R.id.add_point).setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            PointAdapter pa = (PointAdapter)(rv.getAdapter());
+                                            pa.add();
+                                            rv.scrollToPosition(0);
+                                            pa.focus = true;
+                                        }
+                                    });
                                     break;
                                 case 2:
                                     d.findViewById(R.id.note_layout).setVisibility(View.GONE);
@@ -175,12 +188,18 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
                                     EditText mTitle = d.findViewById(R.id.note_title);
                                     EditText mText = d.findViewById(R.id.note_text);
                                     if (!mTitle.getText().toString().trim().isEmpty() || !mText.getText().toString().trim().isEmpty()) {
-                                        Card res = new Card(MainActivity.db.cardTableSize(), pageID, mTitle.getText().toString(), mText.getText().toString());
+                                        Card res = new Card(MainActivity.db.cardTableSize(), pageID, mTitle.getText().toString(), mText.getText().toString(), Card.TYPE_NOTE);
                                         MainActivity.db.addCard(res);
                                         MainActivity.allPagesList.get(pageID).cards.add(MainActivity.db.cardTableSize() - 1);
                                         MainActivity.db.editPage(MainActivity.allPagesList.get(pageID));
                                         mAdapter.updateState();
                                     }
+                                    break;
+                                case 1:
+                                    break;
+                                case 2:
+                                    break;
+                                case 3:
                                     break;
                             }
                         }

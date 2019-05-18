@@ -1,6 +1,8 @@
 package com.example.roman.targets;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,7 +12,9 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -22,7 +26,8 @@ public class PreferencesFragment extends Fragment {
 
     SeekBar displaySeekBar, editSeekBar;
     TextView displayText, editText, tv4;
-    Switch quickEditSwitch;
+    Switch quickEditSwitch, maxHeightSwitch;
+    Button cardMaxHeightButton;
 
     public PreferencesFragment() {
         // Required empty public constructor
@@ -48,7 +53,9 @@ public class PreferencesFragment extends Fragment {
         displayText = view.findViewById(R.id.colnum_display);
         editText = view.findViewById(R.id.colnum_edit);
         quickEditSwitch = view.findViewById(R.id.quick_edit_switch);
+        maxHeightSwitch = view.findViewById(R.id.max_height_switch);
         tv4 = view.findViewById(R.id.textView4);
+        cardMaxHeightButton = view.findViewById(R.id.card_max_height);
 
         SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 
@@ -59,6 +66,15 @@ public class PreferencesFragment extends Fragment {
             editText.setVisibility(View.GONE);
             tv4.setVisibility(View.GONE);
         }
+
+        boolean maxHeightEnabled = sharedPref.getBoolean("maxHeightEnabled", true);
+        maxHeightSwitch.setChecked(maxHeightEnabled);
+        if (!maxHeightEnabled) {
+            cardMaxHeightButton.setVisibility(View.GONE);
+        }
+
+        int cardMaxHeight = sharedPref.getInt("maxHeight", 40);
+        cardMaxHeightButton.setText(String.valueOf(cardMaxHeight));
 
         int defaultValue = 2;
         int count = sharedPref.getInt("displayColumns", defaultValue);
@@ -132,6 +148,47 @@ public class PreferencesFragment extends Fragment {
                     editor.apply();
                 }
                 MainActivity.switchQuickEditMode(isChecked);
+            }
+        });
+        maxHeightSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                if (isChecked) {
+                    cardMaxHeightButton.setVisibility(View.VISIBLE);
+                    editor.putBoolean("maxHeightEnabled", true);
+                    editor.apply();
+                }
+                else {
+                    cardMaxHeightButton.setVisibility(View.GONE);
+                    editor.putBoolean("maxHeightEnabled", false);
+                    editor.apply();
+                }
+                MainActivity.switchQuickEditMode(isChecked);
+            }
+        });
+
+        cardMaxHeightButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                View view1 = getLayoutInflater().inflate(R.layout.number_picker_dialog,null);
+                final NumberPicker np = view1.findViewById(R.id.numberPicker);
+                np.setMinValue(10);
+                np.setMaxValue(100);
+                builder.setView(view1);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        cardMaxHeightButton.setText(String.valueOf(np.getValue()));
+                        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putInt("maxHeight", np.getValue());
+                        editor.apply();
+                    }
+                });
+                builder.create().show();
             }
         });
         return view;

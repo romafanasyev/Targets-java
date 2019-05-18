@@ -30,6 +30,17 @@ public class DBHelper extends SQLiteOpenHelper {
         public static final String COLUMN_CARDS="cards";
         public static final String COLUMN_SECTION="section";
     }
+    public static class CardsTable implements BaseColumns {
+        public static final String TABLE_NAME = "cards_table";
+        public static final String COLUMN_ID = "id";
+        public static final String COLUMN_TEXT = "text";
+        public static final String COLUMN_TITLE = "title";
+        public static final String COLUMN_PAGE_ID = "page_id";
+        public static final String COLUMN_DIVIDER="divider";
+        public static final String COLUMN_TYPE="type";
+        public static final String COLUMN_QUESTIONS="questions";
+        public static final String COLUMN_LINKS="links";
+    }
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -57,19 +68,115 @@ public class DBHelper extends SQLiteOpenHelper {
                 CardsTable.COLUMN_ID + " INTEGER, " +
                 DBHelper.CardsTable.COLUMN_TEXT + " TEXT, " +
                 DBHelper.CardsTable.COLUMN_TITLE + " TEXT, " +
-                DBHelper.CardsTable.COLUMN_PAGE_ID + " TEXT " +
+                DBHelper.CardsTable.COLUMN_PAGE_ID + " TEXT, " +
+                CardsTable.COLUMN_DIVIDER + " BOOLEAN, " +
+                CardsTable.COLUMN_TYPE + " INTEGER, " +
+                CardsTable.COLUMN_QUESTIONS + " STRING, " +
+                CardsTable.COLUMN_LINKS + " STRING " +
                 ")";
         db.execSQL(SQL_CREATE_CARDS_TABLE);
     }
-
     public void addCard(Card card) {
         ContentValues cv = new ContentValues();
         cv.put(CardsTable.COLUMN_ID, card.id);
         cv.put(CardsTable.COLUMN_TEXT, card.text);
         cv.put(CardsTable.COLUMN_TITLE, card.title);
         cv.put(CardsTable.COLUMN_PAGE_ID, card.pageid);
+        cv.put(CardsTable.COLUMN_DIVIDER, card.hasDivider);
+        cv.put(CardsTable.COLUMN_TYPE, card.hasDivider);
+        JSONObject json = new JSONObject();
+        try {
+            json.put("card_questions", new JSONArray(card.questions));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String putQuestions = json.toString();
+        cv.put(CardsTable.COLUMN_QUESTIONS, putQuestions);
+        json = new JSONObject();
+        try {
+            json.put("card_links", new JSONArray(card.links));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String putLinks = json.toString();
+        cv.put(CardsTable.COLUMN_LINKS, putLinks);
         db.insert(CardsTable.TABLE_NAME, null, cv);
     }
+    public int editCard(Card card) {
+        ContentValues cv = new ContentValues();
+        cv.put(CardsTable.COLUMN_TEXT, card.text);
+        cv.put(CardsTable.COLUMN_TITLE, card.title);
+        cv.put(CardsTable.COLUMN_PAGE_ID, card.pageid);
+        cv.put(CardsTable.COLUMN_DIVIDER, card.hasDivider);
+        JSONObject json = new JSONObject();
+        try {
+            json.put("card_questions", new JSONArray(card.questions));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String putQuestions = json.toString();
+        cv.put(CardsTable.COLUMN_QUESTIONS, putQuestions);
+        json = new JSONObject();
+        try {
+            json.put("card_links", new JSONArray(card.questions));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String putLinks = json.toString();
+        cv.put(CardsTable.COLUMN_QUESTIONS, putLinks);
+
+        return db.update(CardsTable.TABLE_NAME, cv, CardsTable.COLUMN_ID + " = ?",
+                new String[]{String.valueOf(card.id)});
+    }
+    public void removeCard(Card card) {
+        db.delete(CardsTable.TABLE_NAME, CardsTable.COLUMN_ID + " = ?", new String[]{Integer.toString(card.id)});
+    }
+    public ArrayList<Card> findPageCards(int pageId) {
+        ArrayList<Card> list = new ArrayList<>();
+        Cursor c = db.rawQuery("SELECT * FROM " + CardsTable.TABLE_NAME + " WHERE " + CardsTable.COLUMN_PAGE_ID + "=?", new String[]{pageId+""});
+        if (c.moveToFirst() && cardTableSize() > 0) {
+            do {
+                Card card = new Card();
+                card.id = c.getInt(c.getColumnIndex(CardsTable.COLUMN_ID));
+                card.pageid = c.getInt(c.getColumnIndex(CardsTable.COLUMN_PAGE_ID));
+                card.title = c.getString(c.getColumnIndex(CardsTable.COLUMN_TITLE));
+                card.text = c.getString(c.getColumnIndex(CardsTable.COLUMN_TEXT));
+                card.hasDivider = c.getInt(c.getColumnIndex(CardsTable.COLUMN_DIVIDER)) > 0;
+                card.type = c.getInt(c.getColumnIndex(CardsTable.COLUMN_TYPE));
+                card.questions = card.links = new ArrayList<>();
+                /*JSONObject json = null;
+                try {
+                    json = new JSONObject(c.getString(c.getColumnIndex(CardsTable.COLUMN_QUESTIONS)));
+                    JSONArray questions = json.optJSONArray("card_questions");
+                    for (int i = 0; i < questions.length(); i++) {
+                        card.questions.add(questions.optInt(i));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    json = new JSONObject(c.getString(c.getColumnIndex(CardsTable.COLUMN_LINKS)));
+                    JSONArray links = json.optJSONArray("card_links");
+                    for (int i = 0; i < links.length(); i++) {
+                        card.links.add(links.optInt(i));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }*/
+                list.add(card);
+            } while (c.moveToNext());
+        }
+        c.close();
+        return list;
+    }
+    public int cardTableSize()
+    {
+        Cursor c = db.rawQuery("SELECT * FROM " + CardsTable.TABLE_NAME, null);
+        int res = c.getCount();
+        c.close();
+        return res;
+    }
+//--------------------------P-A-G-E-S----------------------------------------------------------------------------------------------
 
     public void addPage(Page page) {
         ContentValues cv = new ContentValues();
@@ -91,45 +198,6 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert(PagesTable.TABLE_NAME, null, cv);
     }
 
-    public int editCard(Card card) {
-        ContentValues cv = new ContentValues();
-        cv.put(CardsTable.COLUMN_TEXT, card.text);
-        cv.put(CardsTable.COLUMN_TITLE, card.title);
-        cv.put(CardsTable.COLUMN_PAGE_ID, card.pageid);
-
-        return db.update(CardsTable.TABLE_NAME, cv, CardsTable.COLUMN_ID + " = ?",
-                new String[]{String.valueOf(card.id)});
-    }
-
-    public void removeCard(Card card) {
-        db.delete(CardsTable.TABLE_NAME, CardsTable.COLUMN_ID + " = ?", new String[]{Integer.toString(card.id)});
-    }
-
-    public ArrayList<Card> findPageCards(int pageId) {
-        ArrayList<Card> list = new ArrayList<>();
-        Cursor c = db.rawQuery("SELECT * FROM " + CardsTable.TABLE_NAME + " WHERE " + CardsTable.COLUMN_PAGE_ID + "=?", new String[]{pageId+""});
-        if (c.moveToFirst() && cardTableSize() > 0) {
-            do {
-                Card card = new Card();
-                card.id = c.getInt(c.getColumnIndex(CardsTable.COLUMN_ID));
-                card.pageid = c.getInt(c.getColumnIndex(CardsTable.COLUMN_PAGE_ID));
-                card.title = c.getString(c.getColumnIndex(CardsTable.COLUMN_TITLE));
-                card.text = c.getString(c.getColumnIndex(CardsTable.COLUMN_TEXT));
-                list.add(card);
-            } while (c.moveToNext());
-        }
-        c.close();
-        return list;
-    }
-
-    public static class CardsTable implements BaseColumns {
-        public static final String TABLE_NAME = "cards_table";
-        public static final String COLUMN_ID = "id";
-        public static final String COLUMN_TEXT = "text";
-        public static final String COLUMN_TITLE = "title";
-        public static final String COLUMN_PAGE_ID = "page_id";
-    }
-
     public int editPage(Page page) {
         ContentValues cv = new ContentValues();
         cv.put(PagesTable.COLUMN_CATEGORY, page.getCategory());
@@ -145,6 +213,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         String putCards = json.toString();
         cv.put(PagesTable.COLUMN_CARDS, putCards);
+
         return db.update(PagesTable.TABLE_NAME, cv, PagesTable.COLUMN_ID + " = ?",
                 new String[]{String.valueOf(page.id)});
     }
@@ -178,25 +247,17 @@ public class DBHelper extends SQLiteOpenHelper {
                 JSONObject json = null;
                 try {
                     json = new JSONObject(c.getString(c.getColumnIndex(PagesTable.COLUMN_CARDS)));
+                    JSONArray cards = json.optJSONArray("page_cards");
+                    for (int i = 0; i < cards.length(); i++) {
+                        page.cards.add(cards.optInt(i));
+                    }
+                    pageList.add(page);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                JSONArray cards = json.optJSONArray("page_cards");
-                for (int i = 0; i < cards.length(); i++) {
-                    page.cards.add(cards.optInt(i));
-                }
-                pageList.add(page);
             } while (c.moveToNext());
         }
         c.close();
         return pageList;
-    }
-
-    public int cardTableSize()
-    {
-        Cursor c = db.rawQuery("SELECT * FROM " + CardsTable.TABLE_NAME, null);
-        int res = c.getCount();
-        c.close();
-        return res;
     }
 }
