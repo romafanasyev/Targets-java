@@ -33,14 +33,6 @@
         android:paddingLeft="0dp"
         >
 
-        <ImageButton
-            android:id="@+id/drag_button"
-            style="@style/Base.Widget.AppCompat.ActionButton.Overflow"
-            android:layout_width="20dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/ic_drag_button_black_24dp" />
-
         <TextView
             android:id="@+id/page_avatar"
             android:layout_width="60dp"

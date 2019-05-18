@@ -3,6 +3,7 @@ package com.example.roman.targets;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +74,7 @@ public class PointAdapter extends RecyclerView.Adapter<PointAdapter.PointAdapter
             h.backspace.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    delete(position);
+                    delete(h.getAdapterPosition());
                 }
             });
         }
@@ -102,9 +103,12 @@ public class PointAdapter extends RecyclerView.Adapter<PointAdapter.PointAdapter
     }
     public void delete(int index)
     {
+        //if (index !=0) index--;
         points.remove(index);
         notifyItemRemoved(index);
+        Log.d("myDebug", String.valueOf(index));
     }
+    //int indof()
 
     @Override
     public PointAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

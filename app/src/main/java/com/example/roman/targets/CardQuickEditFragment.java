@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -90,6 +91,18 @@ public class CardQuickEditFragment extends Fragment {
                             d.findViewById(R.id.list_layout).setVisibility(View.VISIBLE);
                             d.findViewById(R.id.question_layout).setVisibility(View.GONE);
                             d.findViewById(R.id.deadline_layout).setVisibility(View.GONE);
+                            final RecyclerView rv = d.findViewById(R.id.point_rv);
+                            rv.setLayoutManager(new LinearLayoutManager(getContext()));
+                            rv.setAdapter(new PointAdapter(true));
+                            d.findViewById(R.id.add_point).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    PointAdapter pa = (PointAdapter)(rv.getAdapter());
+                                    pa.add();
+                                    rv.scrollToPosition(0);
+                                    pa.focus = true;
+                                }
+                            });
                             break;
                         case 2:
                             d.findViewById(R.id.note_layout).setVisibility(View.GONE);
@@ -132,6 +145,12 @@ public class CardQuickEditFragment extends Fragment {
                                 MainActivity.db.editPage(MainActivity.allPagesList.get(pageID));
                                 mAdapter.updateState();
                             }
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+                            break;
+                        case 3:
                             break;
                     }
                 }
