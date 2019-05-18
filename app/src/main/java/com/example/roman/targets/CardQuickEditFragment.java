@@ -17,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -184,6 +185,9 @@ public class CardQuickEditFragment extends Fragment implements RecyclerNameTouch
         mAdapter = new CardQuickEditAdapter(pageID);
         mRecyclerView.setAdapter(mAdapter);
 
+        new ItemTouchHelper(new RecyclerNameTouchHelper(this)).attachToRecyclerView(mRecyclerView);
+
+
         ImageButton backButton = view.findViewById(R.id.backButton);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -214,7 +218,7 @@ public class CardQuickEditFragment extends Fragment implements RecyclerNameTouch
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof CardEditFragment.OnFragmentInteractionListener) {
+        if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         }
     }

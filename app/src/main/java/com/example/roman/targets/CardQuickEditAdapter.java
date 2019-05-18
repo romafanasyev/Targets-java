@@ -3,7 +3,6 @@ package com.example.roman.targets;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -23,18 +22,21 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.example.roman.targets.helper.ItemTouchHelperAdapter;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
 import static com.example.roman.targets.MainActivity.activity;
 import static com.example.roman.targets.MainActivity.allPagesList;
 import static com.example.roman.targets.MainActivity.db;
 
-public class CardQuickEditAdapter extends RecyclerView.Adapter<CardQuickEditAdapter.CardQuickEditAdapterViewHolder> {
+public class CardQuickEditAdapter extends RecyclerView.Adapter<CardQuickEditAdapter.CardQuickEditAdapterViewHolder> implements ItemTouchHelperAdapter {
 
     private int pageId;
     boolean selectCard = true;
@@ -57,6 +59,14 @@ public class CardQuickEditAdapter extends RecyclerView.Adapter<CardQuickEditAdap
             if (mDataset.get(i).hasDivider)
                 mDataset.add(i++, div);
         }
+    }
+
+
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        Collections.swap(mDataset, fromPosition, toPosition);
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
     }
 
     // Provide a reference to the views for each data item
