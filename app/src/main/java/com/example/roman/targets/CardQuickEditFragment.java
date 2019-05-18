@@ -16,19 +16,19 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-public class CardQuickEditFragment extends Fragment {
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+public class CardQuickEditFragment extends Fragment implements RecyclerNameTouchHelper.AnimationListener {
     private static final String ARG_PAGE_ID = "param1";
 
     public int pageID;
 
-    private CardEditFragment.OnFragmentInteractionListener mListener;
+    private OnFragmentInteractionListener mListener;
 
     static TextView noCards;
 
@@ -215,7 +215,7 @@ public class CardQuickEditFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof CardEditFragment.OnFragmentInteractionListener) {
-            mListener = (CardEditFragment.OnFragmentInteractionListener) context;
+            mListener = (OnFragmentInteractionListener) context;
         }
     }
 
@@ -225,6 +225,12 @@ public class CardQuickEditFragment extends Fragment {
         mListener = null;
         mAdapter.hideActions();
         mAdapter.selectedCards.clear();
+    }
+
+    @Override
+    public void onMove(int fromPos, int toPos) {
+        mAdapter.mDataset.add(toPos, mAdapter.mDataset.remove(fromPos));
+        mAdapter.notifyItemMoved(fromPos, toPos);
     }
 
     /**
