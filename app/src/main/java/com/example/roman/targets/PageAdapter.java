@@ -86,16 +86,8 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                 @Override
                 public void onClick(View v) {
                     SharedPreferences sharedPref = MainActivity.activity.getPreferences(Context.MODE_PRIVATE);
-
-                    boolean quickEditEnabled = sharedPref.getBoolean("quickEdit", false);
-                    if (quickEditEnabled) {
-                        CardQuickEditFragment cardQuickEditFragment = CardQuickEditFragment.newInstance(mDataset.get(position).id);
-                        MainActivity.activity.navigate(cardQuickEditFragment);
-                    }
-                    else {
-                        CardsFragment cardsFragment = CardsFragment.newInstance(mDataset.get(position).id);
-                        MainActivity.activity.navigate(cardsFragment);
-                    }
+                    CardsFragment cardsFragment = CardsFragment.newInstance(mDataset.get(position).id);
+                    MainActivity.activity.navigate(cardsFragment);
                 }
             });
             //menu for current page

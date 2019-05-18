@@ -76,7 +76,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         EditText text;
 
         LinearLayout cardMenu;
-        ImageButton b1,b2,b3,b4,b5,b6;
+        ImageButton b1, b2, b3, b4, b5;
         PopupMenu popupMenu;
 
         public CardAdapterViewHolder(CardView v) {
@@ -91,16 +91,15 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             text = v.findViewById(R.id.card_text);
 
             cardMenu = v.findViewById(R.id.edit_mode_menu);
-            b1 = v.findViewById(R.id.add_image);
-            b2 = v.findViewById(R.id.add_picture);
-            b3 = v.findViewById(R.id.add_question);
-            b4 = v.findViewById(R.id.add_divider);
-            b5 = v.findViewById(R.id.add_link);
-            b6 = v.findViewById(R.id.main_funcs);
+            b1 = v.findViewById(R.id.add_picture);
+            b2 = v.findViewById(R.id.add_question);
+            b3 = v.findViewById(R.id.add_divider);
+            b4 = v.findViewById(R.id.add_link);
+            b5 = v.findViewById(R.id.main_funcs);
 
-            popupMenu = new PopupMenu(MainActivity.applicationContext(), b6);
+            popupMenu = new PopupMenu(MainActivity.applicationContext(), b5);
             popupMenu.getMenuInflater().inflate(R.menu.card_actions, popupMenu.getMenu());
-            b6.setOnClickListener(new View.OnClickListener() {
+            b5.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     popupMenu.show();
@@ -346,9 +345,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         if (selectedCards.isEmpty())
             hideActions();
 
-        holder.itemView.findViewById(R.id.card_check).setVisibility(View.GONE);
-
-        holder.b4.setOnClickListener(new View.OnClickListener() {
+        holder.b3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int pos = holder.getAdapterPosition();

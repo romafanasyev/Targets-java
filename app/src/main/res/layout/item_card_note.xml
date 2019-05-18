@@ -20,25 +20,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <CheckBox
-            android:id="@+id/card_check"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
         <LinearLayout
             android:id="@+id/edit_mode_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="12dp">
-
-            <ImageButton
-                android:id="@+id/add_image"
-                style="@style/Base.Widget.AppCompat.ActionButton.Overflow"
-                android:layout_width="0dp"
-                android:layout_height="24dp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_insert_photo_black_24dp" />
 
             <ImageButton
                 android:id="@+id/add_picture"

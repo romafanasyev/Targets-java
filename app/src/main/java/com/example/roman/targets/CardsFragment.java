@@ -196,15 +196,6 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
                                     }
                                     break;
                                 case 1:
-                                    EditText listTitle = d.findViewById(R.id.list_title);
-                                    RecyclerView points = d.findViewById(R.id.point_rv);
-                                    if (!listTitle.getText().toString().trim().isEmpty() || points.getAdapter().getItemCount() != 0) {
-                                        Card res = new Card(MainActivity.db.cardTableSize(), pageID, listTitle.getText().toString(), "", Card.TYPE_LIST);
-                                        MainActivity.db.addCard(res);
-                                        MainActivity.allPagesList.get(pageID).cards.add(MainActivity.db.cardTableSize() - 1);
-                                        MainActivity.db.editPage(MainActivity.allPagesList.get(pageID));
-                                        mAdapter.updateState();
-                                    }
                                     break;
                                 case 2:
                                     break;
