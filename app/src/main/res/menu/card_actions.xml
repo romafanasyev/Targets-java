@@ -6,11 +6,6 @@
         android:icon="@drawable/ic_delete_black_24dp">
     </item>
     <item
-        android:id="@+id/back_color"
-        android:title="@string/change_color"
-        android:icon="@drawable/ic_palette_black_24dp">
-    </item>
-    <item
         android:id="@+id/share"
         android:title="@string/share"
         android:icon="@drawable/ic_share_black_24dp">

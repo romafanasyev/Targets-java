@@ -51,6 +51,8 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
     static TextView noCards;
     RecyclerView mRecyclerView;
 
+    public ImageButton selectionButton;
+
     public CardsFragment() {
         // Required empty public constructor
     }
@@ -77,6 +79,19 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
         View view = inflater.inflate(R.layout.fragment_cards, container, false);
 
         noCards = view.findViewById(R.id.no_cards);
+        if (pageID == 0) view.findViewById(R.id.backButton).setVisibility(View.GONE);
+
+        selectionButton = view.findViewById(R.id.selectButton);
+        View.OnClickListener selectionListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!mAdapter.selectionMode) {
+                    mAdapter.showActions();
+                }
+                else mAdapter.hideActions();
+            }
+        };
+        selectionButton.setOnClickListener(selectionListener);
 
         mRecyclerView = view.findViewById(R.id.card_list);
         TextView title = view.findViewById(R.id.currentPageName);
@@ -99,6 +114,8 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
 
         mAdapter = new CardAdapter(pageID,false, 0);
         mRecyclerView.setAdapter(mAdapter);
+        if (mAdapter.getItemCount() == 0) selectionButton.setVisibility(View.GONE);
+        else selectionButton.setVisibility(View.VISIBLE);
 
         ImageButton backButton = view.findViewById(R.id.backButton);
         backButton.setOnClickListener(new View.OnClickListener() {

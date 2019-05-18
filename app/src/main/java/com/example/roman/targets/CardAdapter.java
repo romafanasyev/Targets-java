@@ -44,7 +44,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
     private static final int TYPE_NOT_A_DIVIDER = 0;
 
     public ArrayList<Card> mDataset;
-    private boolean selectionMode = false;
+    public boolean selectionMode = false;
     ArrayList<Integer> selectedCards = new ArrayList<>();
 
     public CardAdapter(int pageId, boolean editMode, int selectedCardPosition) {
@@ -111,7 +111,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
     private ActionMode.Callback callback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mode.setTitle("1 " + MainActivity.activityContext().getResources().getString(R.string.selected));
+            mode.setTitle("0 " + MainActivity.activityContext().getResources().getString(R.string.selected));
             mode.getMenuInflater().inflate(R.menu.card_actions, menu);
             return true;
         }
@@ -205,8 +205,14 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
     @Override
     public void onBindViewHolder(final CardAdapterViewHolder holder, final int position) {
         Fragment f = activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
-        if (f instanceof CardsFragment)
-            ((CardsFragment)f).checkCards();
+        if (f instanceof CardsFragment) {
+            CardsFragment cf = ((CardsFragment)f);
+            cf.checkCards();
+            if (cf.mAdapter.getItemCount() == 0)
+                cf.selectionButton.setVisibility(View.GONE);
+            else cf.selectionButton.setVisibility(View.VISIBLE);
+        }
+
 
         // select card
         View.OnClickListener clickListener = new View.OnClickListener() {
@@ -228,18 +234,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             }
         };
 
-        // card long press action
-        View.OnLongClickListener longListener = new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (!selectionMode) {
-                    showActions();
-                    selectedCards.add(mDataset.get(holder.getAdapterPosition()).id);
-                    notifyDataSetChanged();
-                }
-                return true;
-            }
-        };
         if (mDataset.get(holder.getAdapterPosition()).divider)
         {
             for (int i=0; i<holder.content.getChildCount(); i++)
@@ -295,7 +289,29 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                         fragment.mRecyclerView.scrollToPosition(position);
                         holder.cardMenu.setVisibility(View.VISIBLE);
                     }
-                    else {
+                    else if (!holder.title.hasFocus()) {
+                        holder.text.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT));
+                        // hide keyboard
+                        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                        holder.cardMenu.setVisibility(View.GONE);
+                    }
+                }
+            };
+            View.OnFocusChangeListener titleFocusListener = new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus)
+                    {
+                        int height = Math.round(MainActivity.activityContext().getResources().getDisplayMetrics().heightPixels * 0.7f);
+                        if (holder.text.getHeight() < height)
+                            holder.text.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
+                        CardEditFragment fragment = (CardEditFragment) activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
+                        fragment.mRecyclerView.scrollToPosition(position);
+                        holder.cardMenu.setVisibility(View.VISIBLE);
+                    }
+                    else if (!holder.text.hasFocus()) {
                         holder.text.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                                 ViewGroup.LayoutParams.WRAP_CONTENT));
                         // hide keyboard
@@ -307,6 +323,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             };
 
             holder.title.addTextChangedListener(textWatcher);
+            holder.title.setOnFocusChangeListener(titleFocusListener);
             holder.text.addTextChangedListener(textWatcher);
             holder.text.setOnFocusChangeListener(textFocusListener);
 
@@ -317,21 +334,11 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             }
         }
         else {
-            SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-            if (sharedPref.getBoolean("maxHeightEnabled", true)) {
-                int percent = sharedPref.getInt("maxHeight", 40);
-                int height = Math.round(MainActivity.activityContext().getResources().getDisplayMetrics().heightPixels * (percent / 100f));
-                holder.text.setMaxHeight(height);
-            }
-
             holder.title.setVisibility(View.GONE);
             holder.text.setVisibility(View.GONE);
 
             holder.mTitle.setText(mDataset.get(holder.getAdapterPosition()).title);
             holder.mText.setText(mDataset.get(holder.getAdapterPosition()).text);
-
-            holder.mTitle.setOnLongClickListener(longListener);
-            holder.mText.setOnLongClickListener(longListener);
 
             holder.mTitle.setOnClickListener(clickListener);
             holder.mText.setOnClickListener(clickListener);
@@ -454,17 +461,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             if (mDataset.get(i).hasDivider)
                 mDataset.add(i++, div);
         }
-        StringBuilder s = new StringBuilder();
-        for (int i=0; i<mDataset.size(); i++)
-            s.append(mDataset.get(i).id);
-        Log.d("myDebug", s.toString()+" (dataSet before notify)");
         notifyDataSetChanged();
         hideActions();
-
-        s = new StringBuilder();
-        for (int i=0; i<mDataset.size(); i++)
-            s.append(mDataset.get(i).id);
-        Log.d("myDebug", s.toString()+" (dataSet after notify)");
     }
 
     public static MoveCopyDialogFragment c;
