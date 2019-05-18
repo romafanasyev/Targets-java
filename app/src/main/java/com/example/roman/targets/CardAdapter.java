@@ -470,7 +470,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         Log.d("myDebug", s.toString()+" (dataSet after notify)");
     }
 
-    private static MoveCopyDialogFragment c;
+    public static MoveCopyDialogFragment c;
 
     public static void dismissDialog()
     {
