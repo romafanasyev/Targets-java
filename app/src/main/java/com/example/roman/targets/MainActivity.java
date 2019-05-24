@@ -5,11 +5,15 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 
@@ -38,6 +42,39 @@ public class MainActivity extends AppCompatActivity {
     public static Fragment currentFragment;
 
 
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+            switch (item.getItemId()) {
+                case R.id.navigation_main:
+                    section = Section.Main;
+                    navigate(mainFragment);
+                    return true;
+                case R.id.navigation_personal:
+                    section = Section.Personal;
+                    navigate(personalFragment);
+                    currentSection = true;
+                    return true;
+                case R.id.navigation_work:
+                    section = Section.Work;
+                    navigate(workFragment);
+                    currentSection = false;
+                    return true;
+                case R.id.navigation_notifications:
+                    section = Section.Notifications;
+                    navigate(notificationsFragment);
+                    return true;
+                case R.id.navigation_more:
+                    section = Section.More;
+                    navigate(moreFragment);
+                    return true;
+            }
+            return false;
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
 
         section = Section.Main;
         navigate(mainFragment);
+        BottomNavigationView navigation = findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
  }
 
     //navigation
