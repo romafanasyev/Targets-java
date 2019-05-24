@@ -231,6 +231,7 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
             mAdapter.mDataset.add(toPos, mAdapter.mDataset.remove(fromPos));
             mAdapter.notifyItemMoved(fromPos, toPos);
         }
+
     }
 
     /**

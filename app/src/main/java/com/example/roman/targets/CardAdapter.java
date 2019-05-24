@@ -3,6 +3,7 @@ package com.example.roman.targets;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.text.Editable;
@@ -22,18 +23,21 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.example.roman.targets.helper.ItemTouchHelperAdapter;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
 import static com.example.roman.targets.MainActivity.activity;
 import static com.example.roman.targets.MainActivity.allPagesList;
 import static com.example.roman.targets.MainActivity.db;
 
-public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterViewHolder> {
+public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterViewHolder> implements ItemTouchHelperAdapter {
 
     private int pageId;
     boolean selectCard = true;
@@ -60,6 +64,13 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             if (mDataset.get(i).hasDivider)
                 mDataset.add(i++, div);
         }
+    }
+
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        Collections.swap(mDataset, fromPosition, toPosition);
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
     }
 
     // Provide a reference to the views for each data item
@@ -124,6 +135,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+
             switch(item.getItemId()) {
                 case  R.id.delete_card:
                     AlertDialog.Builder deleteDialog = new AlertDialog.Builder(MainActivity.activityContext());
@@ -141,6 +153,16 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                         }
                     });
                     deleteDialog.create().show();
+                    return true;
+                case R.id.share:
+
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("text/html");
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "Note");
+                    intent.putExtra(Intent.EXTRA_TEXT, "Here is the note:\n\n" + mDataset.get(selectedCardPosition).text);
+
+                    //startActivity(Intent.createChooser(intent, "title"));
+
                     return true;
                 case R.id.move_copy:
                     c = new MoveCopyDialogFragment();
@@ -483,4 +505,5 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
             return TYPE_DIVIDER;
         else return TYPE_NOT_A_DIVIDER;
     }
+
 }
