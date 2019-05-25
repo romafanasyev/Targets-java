@@ -108,7 +108,7 @@ public class MoveCopyDialogFragment extends DialogFragment {
                             for(int i=0; i<cards.size(); i++)
                             {
                                 Card c = findCardById(cards.get(i), inp);
-                                c.id = MainActivity.db.cardTableSize()+1;
+                                c.id = MainActivity.db.cardTableSize();
                                 MainActivity.db.addCard(c);
                                 selectedPage.cards.add(c.id);
                                 MainActivity.db.editPage(selectedPage);
@@ -119,11 +119,10 @@ public class MoveCopyDialogFragment extends DialogFragment {
                         case R.id.radio_move:
                             for(int i=0; i<cards.size(); i++) {
                                 Card c = findCardById(cards.get(i), inp);
-                                c.id = MainActivity.db.cardTableSize() + 1;
                                 MainActivity.db.addCard(c);
                                 selectedPage.cards.add(c.id);
                                 MainActivity.db.editPage(selectedPage);
-                                MainActivity.allPagesList.get(currentPageId).cards.remove(c);
+                                MainActivity.allPagesList.get(currentPageId).cards.remove(new Integer(c.id));
                                 MainActivity.db.editPage(MainActivity.allPagesList.get(currentPageId));
                             }
                             break;
