@@ -213,6 +213,17 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
                                     }
                                     break;
                                 case 1:
+                                    EditText listTitle = d.findViewById(R.id.list_title);
+                                    RecyclerView rv = d.findViewById(R.id.point_rv);
+                                    PointAdapter adapter = (PointAdapter) rv.getAdapter();
+                                    Card list = adapter.card;
+                                    list.pageid = pageID;
+                                    list.text = listTitle.getText().toString();
+                                    list.points.addAll(adapter.getPointsIds());
+                                    MainActivity.db.addCard(list);
+                                    MainActivity.allPagesList.get(pageID).cards.add(MainActivity.db.cardTableSize() - 1);
+                                    MainActivity.db.editPage(MainActivity.allPagesList.get(pageID));
+                                    mAdapter.updateState();
                                     break;
                                 case 2:
                                     break;

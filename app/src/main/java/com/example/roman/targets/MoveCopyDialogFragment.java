@@ -104,20 +104,20 @@ public class MoveCopyDialogFragment extends DialogFragment {
                     ArrayList<Card> inp = MainActivity.db.findPageCards(currentPageId);
                     switch (radioGroup.getCheckedRadioButtonId())
                     {
-                        case R.id.radio_copy:
-                            for(int i=0; i<cards.size(); i++)
-                            {
+                        case R.id.radio_copy: {
+                            for (int i = 0; i < cards.size(); i++) {
                                 Card c = findCardById(cards.get(i), inp);
                                 c.id = MainActivity.db.cardTableSize();
                                 MainActivity.db.addCard(c);
                                 selectedPage.cards.add(c.id);
                                 MainActivity.db.editPage(selectedPage);
-                                Log.d("<", "Copy to page with id "+selectedPage.id);
-                                Log.d("<", "It's cards: "+selectedPage.cards);
+                                Log.d("<", "Copy to page with id " + selectedPage.id);
+                                Log.d("<", "It's cards: " + selectedPage.cards);
                             }
                             break;
-                        case R.id.radio_move:
-                            for(int i=0; i<cards.size(); i++) {
+                        }
+                        case R.id.radio_move: {
+                            for (int i = 0; i < cards.size(); i++) {
                                 Card c = findCardById(cards.get(i), inp);
                                 MainActivity.db.addCard(c);
                                 selectedPage.cards.add(c.id);
@@ -126,17 +126,18 @@ public class MoveCopyDialogFragment extends DialogFragment {
                                 MainActivity.db.editPage(MainActivity.allPagesList.get(currentPageId));
                             }
                             break;
-                        case R.id.radio_instance:
-                            for(int i=0; i<cards.size(); i++)
-                            {
+                        }
+                        case R.id.radio_instance: {
+                            for (int i = 0; i < cards.size(); i++) {
                                 Card c = findCardById(cards.get(i), inp);
                                 MainActivity.db.addCard(c);
                                 selectedPage.cards.add(c.id);
                                 MainActivity.db.editPage(selectedPage);
-                                Log.d("<", "Copy to page with id "+selectedPage.id);
-                                Log.d("<", "It's cards: "+selectedPage.cards);
+                                Log.d("<", "Copy to page with id " + selectedPage.id);
+                                Log.d("<", "It's cards: " + selectedPage.cards);
                             }
                             break;
+                        }
                     }
                     Fragment fragment = MainActivity.activity.getSupportFragmentManager().findFragmentById(R.id.navigation_content);
                     if (fragment instanceof CardsFragment) {

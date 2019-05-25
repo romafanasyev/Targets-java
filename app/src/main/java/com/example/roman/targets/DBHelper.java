@@ -40,6 +40,14 @@ public class DBHelper extends SQLiteOpenHelper {
         public static final String COLUMN_TYPE="type";
         public static final String COLUMN_QUESTIONS="questions";
         public static final String COLUMN_LINKS="links";
+        public static final String COLUMN_POINTS="points";
+    }
+    public static class PointsTable implements BaseColumns
+    {
+        public static final String TABLE_NAME = "points_table";
+        public static final String COLUMN_ID = "id";
+        public static final String COLUMN_TEXT = "text";
+        public static final String COLUMN_CHECKED = "checked";
     }
 
     public DBHelper(Context context) {
@@ -71,11 +79,67 @@ public class DBHelper extends SQLiteOpenHelper {
                 DBHelper.CardsTable.COLUMN_PAGE_ID + " TEXT, " +
                 CardsTable.COLUMN_DIVIDER + " BOOLEAN, " +
                 CardsTable.COLUMN_TYPE + " INTEGER, " +
-                CardsTable.COLUMN_QUESTIONS + " STRING, " +
-                CardsTable.COLUMN_LINKS + " STRING " +
+                CardsTable.COLUMN_QUESTIONS + " TEXT, " +
+                CardsTable.COLUMN_LINKS + " TEXT, " +
+                CardsTable.COLUMN_POINTS + " TEXT " +
                 ")";
         db.execSQL(SQL_CREATE_CARDS_TABLE);
+        final String SQL_CREATE_POINTS_TABLE = "CREATE TABLE " +
+                PointsTable.TABLE_NAME + " ( " +
+                PointsTable.COLUMN_ID + " INTEGER, " +
+                PointsTable.COLUMN_TEXT + " TEXT, " +
+                PointsTable.COLUMN_CHECKED + " BOOLEAN " +
+                ")";
+        db.execSQL(SQL_CREATE_POINTS_TABLE);
     }
+    //--------------------------P-O-I-N-T-S----------------------------------------------------------------------------------------------
+
+    public void addPoint(Point point) {
+        ContentValues cv = new ContentValues();
+        cv.put(PointsTable.COLUMN_ID, point.id);
+        cv.put(PointsTable.COLUMN_TEXT, point.text);
+        cv.put(PointsTable.COLUMN_CHECKED, point.checked);
+
+        db.insert(PointsTable.TABLE_NAME, null, cv);
+    }
+    public int editPoint(Point point) {
+        ContentValues cv = new ContentValues();
+        cv.put(PointsTable.COLUMN_ID, point.id);
+        cv.put(PointsTable.COLUMN_TEXT, point.text);
+        cv.put(PointsTable.COLUMN_CHECKED, point.checked);
+
+        return db.update(PointsTable.TABLE_NAME, cv, PointsTable.COLUMN_ID + " = ?",
+                new String[]{String.valueOf(point.id)});
+    }
+    public void removePoint(Point point) {
+        db.delete(PointsTable.TABLE_NAME, PointsTable.COLUMN_ID + " = ?", new String[]{Integer.toString(point.id)});
+    }
+    public ArrayList<Point> getAllPoints() {
+        ArrayList<Point> list = new ArrayList<>();
+        Cursor c = db.rawQuery("SELECT * FROM " + PointsTable.TABLE_NAME, null);
+        if (c.moveToFirst() && pointTableSize() > 0) {
+            do {
+                Point point = new Point();
+                point.id = c.getInt(c.getColumnIndex(PointsTable.COLUMN_ID));
+                point.text = c.getString(c.getColumnIndex(PointsTable.COLUMN_TEXT));
+                point.checked = c.getInt(c.getColumnIndex(PointsTable.COLUMN_CHECKED)) > 0;
+
+                list.add(point);
+            } while (c.moveToNext());
+        }
+        c.close();
+        return list;
+    }
+    public int pointTableSize()
+    {
+        Cursor c = db.rawQuery("SELECT * FROM " + PointsTable.TABLE_NAME, null);
+        int res = c.getCount();
+        c.close();
+        return res;
+    }
+
+    //--------------------------C-A-R-D-S----------------------------------------------------------------------------------------------
+
     public void addCard(Card card) {
         ContentValues cv = new ContentValues();
         cv.put(CardsTable.COLUMN_ID, card.id);
@@ -83,7 +147,7 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(CardsTable.COLUMN_TITLE, card.title);
         cv.put(CardsTable.COLUMN_PAGE_ID, card.pageid);
         cv.put(CardsTable.COLUMN_DIVIDER, card.hasDivider);
-        cv.put(CardsTable.COLUMN_TYPE, card.hasDivider);
+        cv.put(CardsTable.COLUMN_TYPE, card.type);
         JSONObject json = new JSONObject();
         try {
             json.put("card_questions", new JSONArray(card.questions));
@@ -100,6 +164,14 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         String putLinks = json.toString();
         cv.put(CardsTable.COLUMN_LINKS, putLinks);
+        json = new JSONObject();
+        try {
+            json.put(CardsTable.COLUMN_POINTS, new JSONArray(card.points));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String putPoints = json.toString();
+        cv.put(CardsTable.COLUMN_POINTS, putPoints);
         db.insert(CardsTable.TABLE_NAME, null, cv);
     }
     public int editCard(Card card) {
@@ -123,7 +195,15 @@ public class DBHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
         String putLinks = json.toString();
-        cv.put(CardsTable.COLUMN_QUESTIONS, putLinks);
+        cv.put(CardsTable.COLUMN_LINKS, putLinks);
+        json = new JSONObject();
+        try {
+            json.put(CardsTable.COLUMN_POINTS, new JSONArray(card.points));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String putPoints = json.toString();
+        cv.put(CardsTable.COLUMN_POINTS, putPoints);
 
         return db.update(CardsTable.TABLE_NAME, cv, CardsTable.COLUMN_ID + " = ?",
                 new String[]{String.valueOf(card.id)});
@@ -145,6 +225,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 card.type = c.getInt(c.getColumnIndex(CardsTable.COLUMN_TYPE));
                 card.questions = new ArrayList<>();
                 card.links = new ArrayList<>();
+                card.points = new ArrayList<>();
                 /*JSONObject json = null;
                 try {
                     json = new JSONObject(c.getString(c.getColumnIndex(CardsTable.COLUMN_QUESTIONS)));
@@ -164,6 +245,16 @@ public class DBHelper extends SQLiteOpenHelper {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }*/
+                JSONObject json;
+                try {
+                    json = new JSONObject(c.getString(c.getColumnIndex(CardsTable.COLUMN_POINTS)));
+                    JSONArray points = json.optJSONArray(CardsTable.COLUMN_POINTS);
+                    for (int i = 0; i < points.length(); i++) {
+                        card.points.add(points.optInt(i));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 list.add(card);
             } while (c.moveToNext());
         }
@@ -224,14 +315,6 @@ public class DBHelper extends SQLiteOpenHelper {
             db.delete(PagesTable.TABLE_NAME,PagesTable.COLUMN_CATEGORY+"=? and "+PagesTable.COLUMN_CATEGORYNAME+"=? and "+PagesTable.COLUMN_TITLE+"=?",new String[]{page.getCategory(),page.category_name,page.getTitle()});
         }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + PagesTable.TABLE_NAME);
-        onCreate(db);
-        db.execSQL("DROP TABLE IF EXISTS " + CardsTable.TABLE_NAME);
-        onCreate(db);
-    }
-
     public ArrayList<Page> getAllPages() {
         ArrayList<Page> pageList = new ArrayList<>();
         db = getReadableDatabase();
@@ -261,5 +344,13 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         c.close();
         return pageList;
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + PagesTable.TABLE_NAME);
+        onCreate(db);
+        db.execSQL("DROP TABLE IF EXISTS " + CardsTable.TABLE_NAME);
+        onCreate(db);
     }
 }

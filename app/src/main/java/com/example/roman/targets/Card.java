@@ -12,15 +12,15 @@ public class Card {
 
     int type;
     int id;
-    String title;
-    String text;
+    String title="";
+    String text="";
     int pageid;
     boolean hasDivider = false;
     boolean divider = false;
 
     ArrayList<Integer> questions = new ArrayList<>();
     ArrayList<Integer> links = new ArrayList<>();
-    ArrayList<Point> points = new ArrayList<>();
+    ArrayList<Integer> points = new ArrayList<>();
 
     Card(int id, int pageid, String title, String text)
     {

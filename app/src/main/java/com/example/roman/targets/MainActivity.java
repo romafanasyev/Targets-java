@@ -1,7 +1,6 @@
 package com.example.roman.targets;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.KeyEvent;
@@ -31,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     public static MainActivity activity;
 
     public static ArrayList<Page> allPagesList = new ArrayList<>();
+    public static ArrayList<Point> allPointsList = new ArrayList<>();
     public static boolean currentSection = true; // true - personal, false - work
 
     public static Fragment mainFragment = new CardsFragment();
@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         activity = this;
         db = new DBHelper(this);
         allPagesList=db.getAllPages();
+        allPointsList=db.getAllPoints();
 
         if (allPagesList.isEmpty()) {
             allPagesList.add(new Page(0, "", true));

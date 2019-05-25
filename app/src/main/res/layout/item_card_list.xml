@@ -8,12 +8,6 @@
     android:layout_margin="3dp"
     android:padding="12dp">
 
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorPrimary" />
-
     <LinearLayout
         android:id="@+id/card_content"
         android:layout_width="match_parent"
