@@ -62,11 +62,17 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
 
         mRecyclerView = view.findViewById(R.id.card_list);
         TextView title = view.findViewById(R.id.currentPageName);
+        ImageButton searchButton = view.findViewById(R.id.searchButton);
+        final EditText search = view.findViewById(R.id.search);
         String section;
         if (pageID !=0)
             section = MainActivity.allPagesList.get(pageID).section ? getResources().getString(R.string.title_personal) + " \\ " : getResources().getString(R.string.title_work) + " \\ ";
         else section = "Targets";
         title.setText(section + MainActivity.allPagesList.get(pageID).title);
+        search.setEnabled(true);
+
+
+
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView

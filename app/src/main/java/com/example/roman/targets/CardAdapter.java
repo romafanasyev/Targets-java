@@ -161,7 +161,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                     intent.putExtra(Intent.EXTRA_SUBJECT, "Note");
                     intent.putExtra(Intent.EXTRA_TEXT, "Here is the note:\n\n" + mDataset.get(selectedCardPosition).text);
 
-                    //startActivity(Intent.createChooser(intent, "title"));
+                    c.startActivity(Intent.createChooser(intent, "Send Email"));
 
                     return true;
                 case R.id.move_copy:
