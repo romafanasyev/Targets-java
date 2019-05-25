@@ -143,7 +143,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 card.text = c.getString(c.getColumnIndex(CardsTable.COLUMN_TEXT));
                 card.hasDivider = c.getInt(c.getColumnIndex(CardsTable.COLUMN_DIVIDER)) > 0;
                 card.type = c.getInt(c.getColumnIndex(CardsTable.COLUMN_TYPE));
-                card.questions = card.links = new ArrayList<>();
+                card.questions = new ArrayList<>();
+                card.links = new ArrayList<>();
                 /*JSONObject json = null;
                 try {
                     json = new JSONObject(c.getString(c.getColumnIndex(CardsTable.COLUMN_QUESTIONS)));
@@ -200,6 +201,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public int editPage(Page page) {
         ContentValues cv = new ContentValues();
+        cv.put(PagesTable.COLUMN_ID, page.id);
         cv.put(PagesTable.COLUMN_CATEGORY, page.getCategory());
         cv.put(PagesTable.COLUMN_CATEGORYNAME,(page.getCategoryName()));
         cv.put(PagesTable.COLUMN_TITLE, page.getTitle());

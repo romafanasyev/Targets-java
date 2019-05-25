@@ -43,7 +43,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
     private static final int TYPE_DIVIDER = 1;
     private static final int TYPE_NOT_A_DIVIDER = 0;
 
-    public ArrayList<Card> mDataset;
+    public ArrayList<Card> mDataset = new ArrayList<>();
     public boolean selectionMode = false;
     ArrayList<Integer> selectedCards = new ArrayList<>();
 
@@ -51,12 +51,12 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         this.pageId = pageId;
         this.editMode = editMode;
         this.selectedCardPosition = selectedCardPosition;
-        mDataset = db.findPageCards(pageId);
+        mDataset.clear();
+        mDataset.addAll(db.findPageCards(pageId));
         Card div = new Card(-1, pageId, "", "");
         div.divider = true;
         for (int i = 0; i < mDataset.size(); i++)
         {
-            Log.d("myDebug", String.valueOf(mDataset.get(i).hasDivider));
             if (mDataset.get(i).hasDivider)
                 mDataset.add(i++, div);
         }
@@ -142,7 +142,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                     deleteDialog.create().show();
                     return true;
                 case R.id.move_copy:
-                    c = new MoveCopyDialogFragment();
+                    c = new MoveCopyDialogFragment(selectedCards, pageId);
                     c.show(activity.getSupportFragmentManager(), "copy");
 
                     InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -412,7 +412,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
                         deleteDialog.create().show();
                         break;
                     case R.id.move_copy:
-                        c = new MoveCopyDialogFragment();
+                        ArrayList<Integer> card = new ArrayList<>();
+                        card.add(mDataset.get(holder.getAdapterPosition()).id);
+                        c = new MoveCopyDialogFragment(card, pageId);
                         c.show(activity.getSupportFragmentManager(), "copy");
 
                         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);

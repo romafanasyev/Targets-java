@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -87,6 +88,8 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.PageAdapterVie
                 public void onClick(View v) {
                     CardsFragment cardsFragment = CardsFragment.newInstance(mDataset.get(position).id);
                     MainActivity.activity.navigate(cardsFragment);
+                    Log.d("<", "On page with id "+mDataset.get(position).id);
+                    Log.d("<", "It's cards: "+mDataset.get(position).cards);
                 }
             });
             //menu for current page

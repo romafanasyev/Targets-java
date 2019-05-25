@@ -49,7 +49,7 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
     public CardAdapter mAdapter;
 
     static TextView noCards;
-    RecyclerView mRecyclerView;
+    public RecyclerView mRecyclerView;
 
     public ImageButton selectionButton;
 

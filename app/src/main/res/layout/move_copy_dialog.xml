@@ -5,27 +5,28 @@
     android:orientation="vertical">
 
     <RadioGroup
+        android:id="@+id/movecopy_radiogroup"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:checkedButton="@id/radioButton"
+        android:checkedButton="@id/radio_move"
         android:orientation="horizontal">
 
         <RadioButton
-            android:id="@+id/radioButton"
+            android:id="@+id/radio_move"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/move" />
 
         <RadioButton
-            android:id="@+id/radioButton2"
+            android:id="@+id/radio_copy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/copy" />
 
         <RadioButton
-            android:id="@+id/radioButton3"
+            android:id="@+id/radio_instance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"

@@ -43,4 +43,8 @@ public class Card {
 
     }
 
+    public Card Clone()
+    {
+        return null;
+    }
 }
