@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -32,12 +34,13 @@ import com.example.roman.targets.helper.ItemTouchHelperAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static com.example.roman.targets.MainActivity.activity;
 import static com.example.roman.targets.MainActivity.allPagesList;
 import static com.example.roman.targets.MainActivity.db;
 
-public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterViewHolder> implements ItemTouchHelperAdapter {
+public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterViewHolder> implements ItemTouchHelperAdapter, Filterable {
 
     private int pageId;
     boolean selectCard = true;
@@ -48,6 +51,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
     private static final int TYPE_NOT_A_DIVIDER = 0;
 
     public ArrayList<Card> mDataset;
+    public ArrayList<Card> mDatasetFull;
     private boolean selectionMode = false;
     ArrayList<Integer> selectedCards = new ArrayList<>();
 
@@ -56,6 +60,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         this.editMode = editMode;
         this.selectedCardPosition = selectedCardPosition;
         mDataset = db.findPageCards(pageId);
+        mDatasetFull = new ArrayList<>(mDataset);
         Card div = new Card(-1, pageId, "", "");
         div.divider = true;
         for (int i = 0; i < mDataset.size(); i++)
@@ -72,6 +77,40 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardAdapterVie
         notifyItemMoved(fromPosition, toPosition);
         return true;
     }
+
+    @Override
+    public Filter getFilter() {
+        return exampleFilter;
+    }
+    private Filter exampleFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<Card> filteredList = new ArrayList<>();
+
+            if(constraint== null){
+                filteredList.addAll(mDatasetFull);
+            }
+            else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                for(Card i : mDatasetFull){
+                    if(i.getText().toLowerCase().contains(filterPattern)){
+                        filteredList.add(i);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return  results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+         mDataset.clear();
+         mDataset.addAll((List)results.values);
+         notifyDataSetChanged();
+        }
+
+    };
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and

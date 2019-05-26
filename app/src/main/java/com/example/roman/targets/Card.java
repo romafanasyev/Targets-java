@@ -42,4 +42,11 @@ public class Card {
 
     }
 
+    public String getTitle(){
+        return title;
+    }
+    public String getText(){
+        return text;
+    }
+
 }
