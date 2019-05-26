@@ -218,7 +218,8 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
                                     PointAdapter adapter = (PointAdapter) rv.getAdapter();
                                     Card list = adapter.card;
                                     list.pageid = pageID;
-                                    list.text = listTitle.getText().toString();
+                                    list.title = listTitle.getText().toString();
+                                    list.points.clear();
                                     list.points.addAll(adapter.getPointsIds());
                                     MainActivity.db.addCard(list);
                                     MainActivity.allPagesList.get(pageID).cards.add(MainActivity.db.cardTableSize() - 1);

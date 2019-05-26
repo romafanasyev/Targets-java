@@ -31,6 +31,7 @@ public class PointAdapter extends RecyclerView.Adapter<PointAdapter.PointAdapter
     {
         this.editMode = editMode;
         this.card = card;
+
         for (int i = 0; i < pointList.size(); i++)
         {
             points.add(findPointById(pointList.get(i)));
@@ -91,8 +92,13 @@ public class PointAdapter extends RecyclerView.Adapter<PointAdapter.PointAdapter
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    points.get(position).text = h.e_text.getText().toString();
-                    points.get(position).save();
+                    try {
+                        points.get(position).text = h.e_text.getText().toString();
+                        points.get(position).save();
+                    }
+                    catch (IndexOutOfBoundsException e) {
+                        //do nothing
+                    }
                 }
             });
 
@@ -136,11 +142,11 @@ public class PointAdapter extends RecyclerView.Adapter<PointAdapter.PointAdapter
     }
     public void delete(int index)
     {
-        notifyItemRemoved(index);
         points.get(index).delete();
-        card.points.remove(index);
-        MainActivity.db.editCard(card);
         points.remove(index);
+        card.points.remove(index);
+        notifyItemRemoved(index);
+        MainActivity.db.editCard(card);
     }
     public ArrayList<Integer> getPointsIds()
     {

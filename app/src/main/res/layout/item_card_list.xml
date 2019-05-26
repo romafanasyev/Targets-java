@@ -79,7 +79,7 @@
             android:id="@+id/add_point"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/transparent"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:text="@string/add_point"
             android:textSize="18sp"
             android:textAllCaps="false"

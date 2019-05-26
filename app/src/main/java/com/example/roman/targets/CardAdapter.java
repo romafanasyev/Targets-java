@@ -231,6 +231,11 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     return true;
                 }
             });
+            for (int i = 0; i < view.getChildCount(); i++)
+            {
+                view.getChildAt(i).setVisibility(View.GONE);
+            }
+            view.findViewById(R.id.divider).setVisibility(View.VISIBLE);
             NoteViewHolder vh = new NoteViewHolder(view);
             return vh;
         }
@@ -282,18 +287,11 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         if (!selectedCards.isEmpty()) notifyDataSetChanged();
                         else hideActions();
                     } else if (!editMode) {
-                        CardEditFragment editFragment = CardEditFragment.newInstance(pageId, position);
+                        CardEditFragment editFragment = CardEditFragment.newInstance(pageId, holder.getAdapterPosition());
                         activity.navigate(editFragment);
                     }
                 }
             };
-
-            if (mDataset.get(holder.getAdapterPosition()).divider) {
-                for (int i = 0; i < holder.content.getChildCount(); i++)
-                    holder.content.getChildAt(i).setVisibility(View.GONE);
-                holder.divider.setVisibility(View.VISIBLE);
-                return;
-            }
 
             holder.cardMenu.setVisibility(View.GONE);
             if (!mDataset.get(holder.getAdapterPosition()).divider)
@@ -479,7 +477,6 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         {
             final ListViewHolder holder = (ListViewHolder)h;
 
-            //TODO: implement recyclerview
             holder.points.setLayoutManager(new LinearLayoutManager(MainActivity.activityContext()));
 
             // select card
@@ -496,7 +493,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         if (!selectedCards.isEmpty()) notifyDataSetChanged();
                         else hideActions();
                     } else if (!editMode) {
-                        CardEditFragment editFragment = CardEditFragment.newInstance(pageId, position);
+                        CardEditFragment editFragment = CardEditFragment.newInstance(pageId, holder.getAdapterPosition());
                         activity.navigate(editFragment);
                     }
                 }
@@ -537,35 +534,15 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     public void afterTextChanged(Editable s) {
                         mDataset.get(holder.getAdapterPosition()).title = holder.et_Title.getText().toString();
                         db.editCard(mDataset.get(holder.getAdapterPosition()));
-
-                        if (mDataset.get(holder.getAdapterPosition()).title.equals("") && mDataset.get(holder.getAdapterPosition()).text.equals("")) {
-
-                            db.removeCard(mDataset.get(holder.getAdapterPosition()));
-                            updateState();
-                        }
                     }
                 };
                 // changing view size on focus
-                View.OnFocusChangeListener textFocusListener = new View.OnFocusChangeListener() {
+                View.OnFocusChangeListener titleFocusListener = new View.OnFocusChangeListener() {
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
                         if (hasFocus) {
                             holder.cardMenu.setVisibility(View.VISIBLE);
-                        } else if (!holder.points.hasFocus()) {
-                            // hide keyboard
-                            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                            holder.cardMenu.setVisibility(View.GONE);
-                        }
-                    }
-                };
-                View.OnFocusChangeListener pointsFocusListener = new View.OnFocusChangeListener() {
-                    @Override
-                    public void onFocusChange(View v, boolean hasFocus) {
-                        if (hasFocus) {
-                            //TODO: check focus on recyclerview
-                            holder.cardMenu.setVisibility(View.VISIBLE);
-                        } else if (!holder.et_Title.hasFocus()) {
+                        } else {
                             // hide keyboard
                             InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
@@ -575,12 +552,10 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 };
 
                 holder.et_Title.addTextChangedListener(textWatcher);
-                holder.et_Title.setOnFocusChangeListener(pointsFocusListener);
-
-                holder.points.setOnFocusChangeListener(textFocusListener);
+                holder.et_Title.setOnFocusChangeListener(titleFocusListener);
 
                 if (holder.getAdapterPosition() == selectedCardPosition && selectCard) {
-                    holder.points.requestFocus();
+                    holder.et_Title.requestFocus();
                     InputMethodManager imgr = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
                     imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
                 }
@@ -592,7 +567,6 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 holder.addPointButton.setVisibility(View.GONE);
                 holder.tv_Title.setText(mDataset.get(holder.getAdapterPosition()).title);
                 holder.tv_Title.setOnClickListener(clickListener);
-                holder.points.setOnClickListener(clickListener);
             }
 
             if (selectedCards.contains(mDataset.get(holder.getAdapterPosition()).id))
@@ -676,6 +650,10 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     return true;
                 }
             });
+        }
+        else if (getItemViewType(h.getAdapterPosition()) == TYPE_DIVIDER)
+        {
+
         }
     }
 

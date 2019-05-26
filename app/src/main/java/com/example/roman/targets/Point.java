@@ -17,8 +17,17 @@ public class Point {
     }
     void delete()
     {
-        MainActivity.allPointsList.remove(id);
+        MainActivity.allPointsList.remove(indexOf(id));
         MainActivity.db.removePoint(this);
         //TODO: dependent => :destroy
+    }
+    private int indexOf(int id)
+    {
+        for (int i=0; i<MainActivity.allPointsList.size(); i++)
+        {
+            if (MainActivity.allPointsList.get(i).id == id)
+                return i;
+        }
+        return -1;
     }
 }
