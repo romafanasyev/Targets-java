@@ -6,15 +6,16 @@ import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import java.util.ArrayList;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.ArrayList;
+
 
 public class MainActivity extends AppCompatActivity {
     public static DBHelper db;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     public static Fragment notificationsFragment = new NotificationsFragment();
     public static Fragment moreFragment = new PreferencesFragment();
     public static Fragment currentFragment;
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -73,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,10 +94,9 @@ public class MainActivity extends AppCompatActivity {
 
         section = Section.Main;
         navigate(mainFragment);
-
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-    }
+ }
 
     //navigation
     @Override

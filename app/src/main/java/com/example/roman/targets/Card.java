@@ -47,4 +47,11 @@ public class Card {
     {
         return null;
     }
+    public String getTitle(){
+        return title;
+    }
+    public String getText(){
+        return text;
+    }
+
 }

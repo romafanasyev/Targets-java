@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,31 +16,14 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import org.json.JSONException;
-
-import java.util.ArrayList;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link CardsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link CardsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.AnimationListener {
     private static final String ARG_PAGE_ID = "param1";
     public int pageID;
@@ -100,6 +82,9 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
             section = MainActivity.allPagesList.get(pageID).section ? getResources().getString(R.string.title_personal) + " \\ " : getResources().getString(R.string.title_work) + " \\ ";
         else section = "Targets";
         title.setText(section + MainActivity.allPagesList.get(pageID).title);
+
+
+
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -278,6 +263,7 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
             mAdapter.mDataset.add(toPos, mAdapter.mDataset.remove(fromPos));
             mAdapter.notifyItemMoved(fromPos, toPos);
         }
+
     }
 
     /**

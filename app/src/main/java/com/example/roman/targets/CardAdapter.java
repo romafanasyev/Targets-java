@@ -3,6 +3,8 @@ package com.example.roman.targets;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,6 +18,8 @@ import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -32,13 +36,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import javax.security.auth.callback.UnsupportedCallbackException;
+import com.example.roman.targets.helper.ItemTouchHelperAdapter;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static com.example.roman.targets.MainActivity.activity;
 import static com.example.roman.targets.MainActivity.allPagesList;
 import static com.example.roman.targets.MainActivity.db;
 
-public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ItemTouchHelperAdapter, Filterable {
 
     private int pageId;
     boolean selectCard = true;
@@ -52,6 +60,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_LIST = 4;
 
     public ArrayList<Card> mDataset = new ArrayList<>();
+    public ArrayList<Card> mDatasetFull;
     public boolean selectionMode = false;
     ArrayList<Integer> selectedCards = new ArrayList<>();
 
@@ -61,6 +70,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.selectedCardPosition = selectedCardPosition;
         mDataset.clear();
         mDataset.addAll(db.findPageCards(pageId));
+        mDatasetFull = new ArrayList<>(mDataset);
         Card div = new Card(-1, pageId, "", "");
         div.divider = true;
         for (int i = 0; i < mDataset.size(); i++)
@@ -69,6 +79,47 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 mDataset.add(i++, div);
         }
     }
+
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        Collections.swap(mDataset, fromPosition, toPosition);
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
+    }
+
+    @Override
+    public Filter getFilter() {
+        return exampleFilter;
+    }
+    private Filter exampleFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<Card> filteredList = new ArrayList<>();
+
+            if(constraint== null){
+                filteredList.addAll(mDatasetFull);
+            }
+            else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                for(Card i : mDatasetFull){
+                    if(i.getText().toLowerCase().contains(filterPattern)){
+                        filteredList.add(i);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return  results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+         mDataset.clear();
+         mDataset.addAll((List)results.values);
+         notifyDataSetChanged();
+        }
+
+    };
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -165,6 +216,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+
             switch(item.getItemId()) {
                 case  R.id.delete_card:
                     AlertDialog.Builder deleteDialog = new AlertDialog.Builder(MainActivity.activityContext());
@@ -182,6 +234,16 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         }
                     });
                     deleteDialog.create().show();
+                    return true;
+                case R.id.share:
+
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("text/html");
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "Note");
+                    intent.putExtra(Intent.EXTRA_TEXT, "Here is the note:\n\n" + mDataset.get(selectedCardPosition).text);
+
+                    c.startActivity(Intent.createChooser(intent, "Send Email"));
+
                     return true;
                 case R.id.move_copy:
                     c = new MoveCopyDialogFragment(selectedCards, pageId);
@@ -690,6 +752,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if (mDataset.get(i).hasDivider)
                 mDataset.add(i++, div);
         }
+
         notifyDataSetChanged();
         hideActions();
     }
