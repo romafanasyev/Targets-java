@@ -35,6 +35,8 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.viewpager:viewpager:1.0.0'
     implementation 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
+    implementation 'com.pes.materialcolorpicker:library:1.2.0'
+    implementation project(':drawingview')
 
     //noinspection GradleCompatible
 }

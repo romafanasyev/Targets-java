@@ -1,6 +1,7 @@
 package com.example.roman.targets;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.KeyEvent;
@@ -64,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
                     currentSection = false;
                     return true;
                 case R.id.navigation_notifications:
-                    section = Section.Notifications;
-                    navigate(notificationsFragment);
+                    Intent intent = new Intent(MainActivity.this, DrawActivity.class);
+                    startActivity(intent);
                     return true;
                 case R.id.navigation_more:
                     section = Section.More;
