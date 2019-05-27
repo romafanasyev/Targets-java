@@ -743,9 +743,78 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                 }
             });
         }
-        else if (getItemViewType(h.getAdapterPosition()) == TYPE_DIVIDER)
+        else if (getItemViewType(h.getAdapterPosition()) == TYPE_DEADLINE)
         {
+            final DeadlineViewHolder holder = (DeadlineViewHolder) h;
 
+            if (editMode) {
+                // saving changes to cards
+                TextWatcher textWatcher = new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        mDataset.get(holder.getAdapterPosition()).text = holder.text.getText().toString();
+                        db.editCard(mDataset.get(holder.getAdapterPosition()));
+                    }
+                };
+
+                holder.text.addTextChangedListener(textWatcher);
+
+            } else {
+                holder.text.setText(mDataset.get(holder.getAdapterPosition()).text);
+            }
+
+            holder.popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.delete_card:
+                            AlertDialog.Builder deleteDialog = new AlertDialog.Builder(MainActivity.activityContext());
+                            deleteDialog.setMessage(R.string.card_delete_message);
+                            deleteDialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Card c = new Card();
+                                    c.id = mDataset.get(holder.getAdapterPosition()).id;
+                                    db.removeCard(c);
+                                    db.editPage(allPagesList.get(pageId));
+                                    updateState();
+                                }
+                            });
+                            deleteDialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // do nothing
+                                }
+                            });
+                            deleteDialog.create().show();
+                            break;
+                        case R.id.move_copy:
+                            ArrayList<Integer> card = new ArrayList<>();
+                            card.add(mDataset.get(holder.getAdapterPosition()).id);
+                            c = new MoveCopyDialogFragment(card, pageId);
+                            c.show(activity.getSupportFragmentManager(), "copy");
+
+                            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                            View view = activity.getCurrentFocus();
+                            //If no view currently has focus, create a new one, just so we can grab a window token from it
+                            if (view == null) {
+                                view = new View(activity);
+                            }
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                    return true;
+                }
+            });
         }
     }
 

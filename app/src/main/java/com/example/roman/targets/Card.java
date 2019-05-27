@@ -1,9 +1,7 @@
 package com.example.roman.targets;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 public class Card {
 
@@ -24,7 +22,7 @@ public class Card {
     ArrayList<Integer> links = new ArrayList<>();
     ArrayList<Integer> points = new ArrayList<>();
 
-    private Calendar start, end;
+    private Calendar start = Calendar.getInstance(), end = Calendar.getInstance();
 
     Card(int id, int pageid, String title, String text)
     {
@@ -58,10 +56,12 @@ public class Card {
 
     public String Start()
     {
+        if (start == null) return "";
         return String.format("%s.%s, %s:%s", start.get(Calendar.YEAR), start.get(Calendar.MONTH), start.get(Calendar.HOUR_OF_DAY), start.get(Calendar.MINUTE));
     }
     public String End()
     {
+        if (end == null) return "";
         return String.format("%s.%s, %s:%s", end.get(Calendar.YEAR), end.get(Calendar.MONTH), end.get(Calendar.HOUR_OF_DAY), end.get(Calendar.MINUTE));
     }
 
