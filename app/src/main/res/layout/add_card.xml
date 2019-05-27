@@ -118,7 +118,7 @@
                     android:orientation="vertical">
 
                     <EditText
-                        android:id="@+id/card_text"
+                        android:id="@+id/deadline_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/title"
@@ -132,11 +132,12 @@
                 </LinearLayout>
 
                 <Button
+                    android:id="@+id/setTime"
                     style="?android:attr/borderlessButtonStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Pick a date and time"
+                    android:text="@string/set_time"
                     android:textAlignment="center"
                     android:textAllCaps="false" />
             </LinearLayout>
@@ -165,7 +166,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Question text won't be editable"
+            android:text="@string/question_text_won_t_be_editable"
             android:textColor="#000000"
             android:textSize="18sp" />
 

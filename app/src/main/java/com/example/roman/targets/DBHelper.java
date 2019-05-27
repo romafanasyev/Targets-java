@@ -41,6 +41,8 @@ public class DBHelper extends SQLiteOpenHelper {
         public static final String COLUMN_QUESTIONS="questions";
         public static final String COLUMN_LINKS="links";
         public static final String COLUMN_POINTS="points";
+        public static final String COLUMN_START="starting";
+        public static final String COLUMN_END="ending";
     }
     public static class PointsTable implements BaseColumns
     {
@@ -81,7 +83,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 CardsTable.COLUMN_TYPE + " INTEGER, " +
                 CardsTable.COLUMN_QUESTIONS + " TEXT, " +
                 CardsTable.COLUMN_LINKS + " TEXT, " +
-                CardsTable.COLUMN_POINTS + " TEXT " +
+                CardsTable.COLUMN_POINTS + " TEXT, " +
+                CardsTable.COLUMN_START + " TEXT, " +
+                CardsTable.COLUMN_END + " TEXT " +
                 ")";
         db.execSQL(SQL_CREATE_CARDS_TABLE);
         final String SQL_CREATE_POINTS_TABLE = "CREATE TABLE " +
@@ -148,6 +152,8 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(CardsTable.COLUMN_PAGE_ID, card.pageid);
         cv.put(CardsTable.COLUMN_DIVIDER, card.hasDivider);
         cv.put(CardsTable.COLUMN_TYPE, card.type);
+        cv.put(CardsTable.COLUMN_START, card.Start());
+        cv.put(CardsTable.COLUMN_END, card.End());
         JSONObject json = new JSONObject();
         try {
             json.put("card_questions", new JSONArray(card.questions));

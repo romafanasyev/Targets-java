@@ -1,6 +1,8 @@
 package com.example.roman.targets;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -11,10 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -23,6 +28,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.AnimationListener {
     private static final String ARG_PAGE_ID = "param1";
@@ -34,6 +42,8 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
     public RecyclerView mRecyclerView;
 
     public ImageButton selectionButton;
+
+    static Calendar cal;
 
     public CardsFragment() {
         // Required empty public constructor
@@ -160,6 +170,44 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
                                     d.findViewById(R.id.list_layout).setVisibility(View.GONE);
                                     d.findViewById(R.id.question_layout).setVisibility(View.GONE);
                                     d.findViewById(R.id.deadline_layout).setVisibility(View.VISIBLE);
+                                    final Button button = d.findViewById(R.id.setTime);
+                                    button.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            final Calendar c = Calendar.getInstance();
+                                            final int mYear = c.get(Calendar.YEAR);
+                                            int mMonth = c.get(Calendar.MONTH);
+                                            final int mDay = c.get(Calendar.DAY_OF_MONTH);
+                                            final int mHour = c.get(Calendar.HOUR_OF_DAY);
+                                            final int mMinute = c.get(Calendar.MINUTE);
+
+                                            DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.activityContext(),
+                                                    new DatePickerDialog.OnDateSetListener() {
+
+                                                        @Override
+                                                        public void onDateSet(DatePicker view, final int year,
+                                                                              final int monthOfYear, final int dayOfMonth) {
+
+                                                            TimePickerDialog timePickerDialog = new TimePickerDialog(MainActivity.activityContext(),
+                                                                    new TimePickerDialog.OnTimeSetListener() {
+
+                                                                        @Override
+                                                                        public void onTimeSet(TimePicker view, int hourOfDay,
+                                                                                              int minute) {
+
+                                                                            Calendar calendar = Calendar.getInstance();
+                                                                            calendar.set(year, monthOfYear, dayOfMonth, hourOfDay, minute);
+                                                                            cal = calendar;
+                                                                            button.setText(String.format("%s.%s, %s:%s", dayOfMonth, monthOfYear, hourOfDay, minute));
+                                                                        }
+                                                                    }, mHour, mMinute, true);
+                                                            timePickerDialog.show();
+
+                                                        }
+                                                    }, mYear, mMonth, mDay);
+                                            datePickerDialog.show();
+                                        }
+                                    });
                                     break;
                                 case 3:
                                     d.findViewById(R.id.note_layout).setVisibility(View.GONE);
@@ -212,6 +260,12 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
                                     mAdapter.updateState();
                                     break;
                                 case 2:
+                                    EditText deadlineText = d.findViewById(R.id.deadline_text);
+                                    Card deadline = new Card(MainActivity.db.cardTableSize(), pageID, deadlineText.getText().toString(), cal);
+                                    MainActivity.db.addCard(deadline);
+                                    MainActivity.allPagesList.get(pageID).cards.add(MainActivity.db.cardTableSize() - 1);
+                                    MainActivity.db.editPage(MainActivity.allPagesList.get(pageID));
+                                    mAdapter.updateState();
                                     break;
                                 case 3:
                                     break;

@@ -33,20 +33,21 @@
                 android:textStyle="bold" />
 
             <ProgressBar
-                android:layout_weight="1"
+                android:id="@+id/progress"
+                style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:indeterminate="false"
                 android:max="100"
-                android:progress="70"
-                style="?android:attr/progressBarStyleHorizontal" />
+                android:progress="70" />
 
-            <Button
-                style="?android:attr/borderlessButtonStyle"
+            <TextView
+                android:id="@+id/setTime"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Deadline text"
+                android:text="deadline time"
                 android:textAlignment="center"
                 android:textAllCaps="false" />
             <ImageButton

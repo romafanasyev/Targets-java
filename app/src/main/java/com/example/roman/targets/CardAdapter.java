@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -23,11 +22,11 @@ import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -38,7 +37,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.example.roman.targets.helper.ItemTouchHelperAdapter;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -120,10 +118,10 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         }
 
     };
-
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
+
     public static class NoteViewHolder extends RecyclerView.ViewHolder {
         View divider;
         LinearLayout content;
@@ -193,6 +191,32 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             popupMenu = new PopupMenu(MainActivity.applicationContext(), b4);
             popupMenu.getMenuInflater().inflate(R.menu.card_actions, popupMenu.getMenu());
             b4.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    popupMenu.show();
+                }
+            });
+        }
+    }
+
+    public static class DeadlineViewHolder extends RecyclerView.ViewHolder
+    {
+        EditText text;
+        ProgressBar progressBar;
+        TextView setTimeButton;
+        ImageButton mainFuncs;
+        PopupMenu popupMenu;
+
+        public DeadlineViewHolder(@NonNull View v) {
+            super(v);
+            text = v.findViewById(R.id.card_text);
+            progressBar = v.findViewById(R.id.progress);
+            setTimeButton = v.findViewById(R.id.setTime);
+            mainFuncs = v.findViewById(R.id.main_funcs);
+
+            popupMenu = new PopupMenu(MainActivity.applicationContext(), mainFuncs);
+            popupMenu.getMenuInflater().inflate(R.menu.card_actions, popupMenu.getMenu());
+            mainFuncs.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     popupMenu.show();
@@ -310,6 +334,12 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             final CardView v = (CardView) LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_card_list, parent, false);
             return new ListViewHolder(v);
+        }
+        else if (viewType == TYPE_DEADLINE)
+        {
+            final CardView v = (CardView) LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_card_deadline, parent, false);
+            return new DeadlineViewHolder(v);
         }
         return new NoteViewHolder(view);
     }

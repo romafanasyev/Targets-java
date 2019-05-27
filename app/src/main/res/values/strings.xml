@@ -38,6 +38,8 @@
     <string name="move">Move</string>
     <string name="copy">Copy</string>
     <string name="make_instance">Make Instance</string>
+    <string name="set_time">Set Time</string>
+    <string name="question_text_won_t_be_editable">Question text won\'t be editable!</string>
 
     <string-array name="card_types">
         <item>Note</item>
