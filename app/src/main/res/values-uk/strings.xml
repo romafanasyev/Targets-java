@@ -39,6 +39,8 @@
     <string name="move">Перемістити</string>
     <string name="copy">Копіювати</string>
     <string name="make_instance">Створити екземпляр</string>
+    <string name="set_time">Встановити час</string>
+    <string name="question_text_won_t_be_editable">Текст запитання не можна буде змінити!</string>
 
     <string-array name="card_types">
         <item>Нотатка</item>

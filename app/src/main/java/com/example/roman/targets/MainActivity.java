@@ -1,21 +1,21 @@
 package com.example.roman.targets;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.ArrayList;
+
 
 public class MainActivity extends AppCompatActivity {
     public static DBHelper db;
@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     public static MainActivity activity;
 
     public static ArrayList<Page> allPagesList = new ArrayList<>();
+    public static ArrayList<Point> allPointsList = new ArrayList<>();
     public static boolean currentSection = true; // true - personal, false - work
 
     public static Fragment mainFragment = new CardsFragment();
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     public static Fragment notificationsFragment = new NotificationsFragment();
     public static Fragment moreFragment = new PreferencesFragment();
     public static Fragment currentFragment;
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -73,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,24 +84,19 @@ public class MainActivity extends AppCompatActivity {
         activity = this;
         db = new DBHelper(this);
         allPagesList=db.getAllPages();
+        allPointsList=db.getAllPoints();
 
         if (allPagesList.isEmpty()) {
             allPagesList.add(new Page(0, "", true));
             db.addPage(MainActivity.allPagesList.get(0));
         }
-
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        if (sharedPref.getBoolean("quickEdit", false)) {
-            mainFragment = CardQuickEditFragment.newInstance(0);
-        }
-        else mainFragment = CardsFragment.newInstance(0);
+        mainFragment = CardsFragment.newInstance(0);
 
         section = Section.Main;
         navigate(mainFragment);
-
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-    }
+ }
 
     //navigation
     @Override
@@ -108,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
     {
         if ((keyCode == KeyEvent.KEYCODE_BACK))
         {
-            if (currentFragment instanceof CardsFragment || currentFragment instanceof CardQuickEditFragment)
+            if (currentFragment instanceof CardsFragment)
             {
                 if (section == Section.Personal) {
                     personalFragment = new PersonalFragment();
@@ -132,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void back() {
-        if (currentFragment instanceof CardsFragment || currentFragment instanceof CardQuickEditFragment)
+        if (currentFragment instanceof CardsFragment)
         {
             if (section == Section.Personal) {
                 personalFragment = new PersonalFragment();
@@ -188,33 +184,6 @@ public class MainActivity extends AppCompatActivity {
 
     public static Context activityContext() {
         return activityContext;
-    }
-
-    public static void switchQuickEditMode(boolean switch_to)
-    {
-        if (switch_to) {
-            if (mainFragment instanceof CardsFragment)
-                mainFragment = CardQuickEditFragment.newInstance(((CardsFragment) mainFragment).pageID);
-            if (personalFragment instanceof CardsFragment)
-                personalFragment = CardQuickEditFragment.newInstance(((CardsFragment) personalFragment).pageID);
-            if (workFragment instanceof CardsFragment)
-                workFragment = CardQuickEditFragment.newInstance(((CardsFragment) workFragment).pageID);
-
-            if (mainFragment instanceof CardEditFragment)
-                mainFragment = CardQuickEditFragment.newInstance(((CardEditFragment) mainFragment).pageID);
-            if (personalFragment instanceof CardEditFragment)
-                personalFragment = CardQuickEditFragment.newInstance(((CardEditFragment) personalFragment).pageID);
-            if (workFragment instanceof CardEditFragment)
-                workFragment = CardQuickEditFragment.newInstance(((CardEditFragment) workFragment).pageID);
-        }
-        else {
-            if (mainFragment instanceof CardQuickEditFragment)
-                mainFragment = CardsFragment.newInstance(((CardQuickEditFragment) mainFragment).pageID);
-            if (personalFragment instanceof CardQuickEditFragment)
-                personalFragment = CardsFragment.newInstance(((CardQuickEditFragment) personalFragment).pageID);
-            if (workFragment instanceof CardQuickEditFragment)
-                workFragment = CardsFragment.newInstance(((CardQuickEditFragment) workFragment).pageID);
-        }
     }
 }
 

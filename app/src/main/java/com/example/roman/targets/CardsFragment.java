@@ -1,47 +1,36 @@
 package com.example.roman.targets;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import org.json.JSONException;
-
-import java.util.ArrayList;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link CardsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link CardsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.Calendar;
+
 public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.AnimationListener {
     private static final String ARG_PAGE_ID = "param1";
     public int pageID;
@@ -49,7 +38,11 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
     public CardAdapter mAdapter;
 
     static TextView noCards;
-    RecyclerView mRecyclerView;
+    public RecyclerView mRecyclerView;
+
+    public ImageButton selectionButton;
+
+    static Calendar calend;
 
     public CardsFragment() {
         // Required empty public constructor
@@ -77,6 +70,19 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
         View view = inflater.inflate(R.layout.fragment_cards, container, false);
 
         noCards = view.findViewById(R.id.no_cards);
+        if (pageID == 0) view.findViewById(R.id.backButton).setVisibility(View.GONE);
+
+        selectionButton = view.findViewById(R.id.selectButton);
+        View.OnClickListener selectionListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!mAdapter.selectionMode) {
+                    mAdapter.showActions();
+                }
+                else mAdapter.hideActions();
+            }
+        };
+        selectionButton.setOnClickListener(selectionListener);
 
         mRecyclerView = view.findViewById(R.id.card_list);
         TextView title = view.findViewById(R.id.currentPageName);
@@ -85,6 +91,9 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
             section = MainActivity.allPagesList.get(pageID).section ? getResources().getString(R.string.title_personal) + " \\ " : getResources().getString(R.string.title_work) + " \\ ";
         else section = "Targets";
         title.setText(section + MainActivity.allPagesList.get(pageID).title);
+
+
+
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -99,6 +108,8 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
 
         mAdapter = new CardAdapter(pageID,false, 0);
         mRecyclerView.setAdapter(mAdapter);
+        if (mAdapter.getItemCount() == 0) selectionButton.setVisibility(View.GONE);
+        else selectionButton.setVisibility(View.VISIBLE);
 
         ImageButton backButton = view.findViewById(R.id.backButton);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -158,6 +169,45 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
                                     d.findViewById(R.id.list_layout).setVisibility(View.GONE);
                                     d.findViewById(R.id.question_layout).setVisibility(View.GONE);
                                     d.findViewById(R.id.deadline_layout).setVisibility(View.VISIBLE);
+                                    final Button button = d.findViewById(R.id.setTime);
+                                    button.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            final Calendar c = Calendar.getInstance();
+                                            final int mYear = c.get(Calendar.YEAR);
+                                            int mMonth = c.get(Calendar.MONTH);
+                                            final int mDay = c.get(Calendar.DAY_OF_MONTH);
+                                            final int mHour = c.get(Calendar.HOUR_OF_DAY);
+                                            final int mMinute = c.get(Calendar.MINUTE);
+
+                                            DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.activityContext(),
+                                                    new DatePickerDialog.OnDateSetListener() {
+
+                                                        @Override
+                                                        public void onDateSet(DatePicker view, final int year,
+                                                                              final int monthOfYear, final int dayOfMonth) {
+
+                                                            y = year; m = monthOfYear; day = dayOfMonth;
+                                                            TimePickerDialog timePickerDialog = new TimePickerDialog(MainActivity.activityContext(),
+                                                                    new TimePickerDialog.OnTimeSetListener() {
+
+                                                                        @Override
+                                                                        public void onTimeSet(TimePicker view, int hourOfDay,
+                                                                                              int minute) {
+
+                                                                            Calendar calendar = Calendar.getInstance();
+                                                                            calendar.set(y, m, day, hourOfDay, minute);
+                                                                            calend = calendar;
+                                                                            button.setText(String.format("%s.%s, %s:%s", dayOfMonth, monthOfYear, hourOfDay, minute));
+                                                                        }
+                                                                    }, mHour, mMinute, true);
+                                                            timePickerDialog.show();
+
+                                                        }
+                                                    }, mYear, mMonth, mDay);
+                                            datePickerDialog.show();
+                                        }
+                                    });
                                     break;
                                 case 3:
                                     d.findViewById(R.id.note_layout).setVisibility(View.GONE);
@@ -196,8 +246,29 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
                                     }
                                     break;
                                 case 1:
+                                    EditText listTitle = d.findViewById(R.id.list_title);
+                                    RecyclerView rv = d.findViewById(R.id.point_rv);
+                                    PointAdapter adapter = (PointAdapter) rv.getAdapter();
+                                    Card list = adapter.card;
+                                    list.pageid = pageID;
+                                    list.title = listTitle.getText().toString();
+                                    list.points.clear();
+                                    list.points.addAll(adapter.getPointsIds());
+                                    MainActivity.db.addCard(list);
+                                    MainActivity.allPagesList.get(pageID).cards.add(MainActivity.db.cardTableSize() - 1);
+                                    MainActivity.db.editPage(MainActivity.allPagesList.get(pageID));
+                                    mAdapter.updateState();
                                     break;
                                 case 2:
+                                    if (calend != null) {
+                                        EditText deadlineText = d.findViewById(R.id.deadline_text);
+                                        Card deadline = new Card(MainActivity.db.cardTableSize(), pageID, deadlineText.getText().toString(), calend);
+                                        MainActivity.db.addCard(deadline);
+                                        MainActivity.allPagesList.get(pageID).cards.add(MainActivity.db.cardTableSize() - 1);
+                                        MainActivity.db.editPage(MainActivity.allPagesList.get(pageID));
+                                        mAdapter.updateState();
+                                        calend = null;
+                                    }
                                     break;
                                 case 3:
                                     break;
@@ -211,6 +282,8 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
             });
         return view;
     }
+
+    int y, day, m;
 
     public void checkCards()
     {
@@ -249,6 +322,7 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
             mAdapter.mDataset.add(toPos, mAdapter.mDataset.remove(fromPos));
             mAdapter.notifyItemMoved(fromPos, toPos);
         }
+
     }
 
     /**

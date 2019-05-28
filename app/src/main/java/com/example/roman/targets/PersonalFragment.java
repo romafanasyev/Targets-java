@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.example.roman.targets.helper.ItemTouchHelperAdapter;
 import com.example.roman.targets.helper.OnStartDragListener;
 import com.example.roman.targets.helper.SimpleItemTouchHelperCallback;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 
 /**
@@ -55,7 +56,7 @@ public class PersonalFragment extends Fragment implements OnStartDragListener {
     public RecyclerView.Adapter mAdapter;
     static TextView noPages;
     private LinearLayoutManager mLayoutManager;
-    private Button add_button;
+    private FloatingActionButton add_button;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

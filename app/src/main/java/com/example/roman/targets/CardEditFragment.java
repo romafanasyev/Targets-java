@@ -62,6 +62,7 @@ public class CardEditFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_cards, container, false);
         view.findViewById(R.id.no_cards).setVisibility(View.GONE);
+        view.findViewById(R.id.selectButton).setVisibility(View.GONE);
 
         mRecyclerView = view.findViewById(R.id.card_list);
         TextView title = view.findViewById(R.id.currentPageName);
