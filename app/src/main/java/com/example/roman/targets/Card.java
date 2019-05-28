@@ -22,7 +22,7 @@ public class Card {
     ArrayList<Integer> links = new ArrayList<>();
     ArrayList<Integer> points = new ArrayList<>();
 
-    private Calendar start = Calendar.getInstance(), end = Calendar.getInstance();
+    Calendar start = Calendar.getInstance(), end = Calendar.getInstance();
 
     Card(int id, int pageid, String title, String text)
     {
@@ -62,7 +62,7 @@ public class Card {
     public String End()
     {
         if (end == null) return "";
-        return String.format("%s.%s, %s:%s", end.get(Calendar.YEAR), end.get(Calendar.MONTH), end.get(Calendar.HOUR_OF_DAY), end.get(Calendar.MINUTE));
+        return String.format("%s.%s, %s:%s", end.get(Calendar.DAY_OF_MONTH), end.get(Calendar.MONTH), end.get(Calendar.HOUR_OF_DAY), end.get(Calendar.MINUTE));
     }
 
     public String getTitle(){

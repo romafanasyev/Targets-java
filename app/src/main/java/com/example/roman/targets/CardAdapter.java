@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,6 +38,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.example.roman.targets.helper.ItemTouchHelperAdapter;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -202,16 +204,14 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     public static class DeadlineViewHolder extends RecyclerView.ViewHolder
     {
         EditText text;
-        ProgressBar progressBar;
-        TextView setTimeButton;
+        TextView setTime;
         ImageButton mainFuncs;
         PopupMenu popupMenu;
 
         public DeadlineViewHolder(@NonNull View v) {
             super(v);
             text = v.findViewById(R.id.card_text);
-            progressBar = v.findViewById(R.id.progress);
-            setTimeButton = v.findViewById(R.id.setTime);
+            setTime = v.findViewById(R.id.setTime);
             mainFuncs = v.findViewById(R.id.main_funcs);
 
             popupMenu = new PopupMenu(MainActivity.applicationContext(), mainFuncs);
@@ -339,6 +339,24 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         {
             final CardView v = (CardView) LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_card_deadline, parent, false);
+            v.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    final ViewGroup.LayoutParams lp = v.getLayoutParams();
+                    if (lp instanceof StaggeredGridLayoutManager.LayoutParams) {
+                        StaggeredGridLayoutManager.LayoutParams sglp =
+                                (StaggeredGridLayoutManager.LayoutParams) lp;
+                        sglp.setFullSpan(true);
+                        sglp.width = v.getWidth() / 2;
+                        v.setLayoutParams(sglp);
+                        final StaggeredGridLayoutManager lm =
+                                (StaggeredGridLayoutManager) ((RecyclerView) parent).getLayoutManager();
+                        lm.invalidateSpanAssignments();
+                    }
+                    v.getViewTreeObserver().removeOnPreDrawListener(this);
+                    return true;
+                }
+            });
             return new DeadlineViewHolder(v);
         }
         return new NoteViewHolder(view);
@@ -747,7 +765,6 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         {
             final DeadlineViewHolder holder = (DeadlineViewHolder) h;
 
-            if (editMode) {
                 // saving changes to cards
                 TextWatcher textWatcher = new TextWatcher() {
                     @Override
@@ -769,9 +786,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
                 holder.text.addTextChangedListener(textWatcher);
 
-            } else {
                 holder.text.setText(mDataset.get(holder.getAdapterPosition()).text);
-            }
+                holder.setTime.setText(mDataset.get(holder.getAdapterPosition()).End());
 
             holder.popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override

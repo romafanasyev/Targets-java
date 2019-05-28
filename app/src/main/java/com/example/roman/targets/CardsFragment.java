@@ -29,7 +29,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.AnimationListener {
@@ -43,7 +42,7 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
 
     public ImageButton selectionButton;
 
-    static Calendar cal;
+    static Calendar calend;
 
     public CardsFragment() {
         // Required empty public constructor
@@ -188,6 +187,7 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
                                                         public void onDateSet(DatePicker view, final int year,
                                                                               final int monthOfYear, final int dayOfMonth) {
 
+                                                            y = year; m = monthOfYear; day = dayOfMonth;
                                                             TimePickerDialog timePickerDialog = new TimePickerDialog(MainActivity.activityContext(),
                                                                     new TimePickerDialog.OnTimeSetListener() {
 
@@ -196,8 +196,8 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
                                                                                               int minute) {
 
                                                                             Calendar calendar = Calendar.getInstance();
-                                                                            calendar.set(year, monthOfYear, dayOfMonth, hourOfDay, minute);
-                                                                            cal = calendar;
+                                                                            calendar.set(y, m, day, hourOfDay, minute);
+                                                                            calend = calendar;
                                                                             button.setText(String.format("%s.%s, %s:%s", dayOfMonth, monthOfYear, hourOfDay, minute));
                                                                         }
                                                                     }, mHour, mMinute, true);
@@ -260,12 +260,15 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
                                     mAdapter.updateState();
                                     break;
                                 case 2:
-                                    EditText deadlineText = d.findViewById(R.id.deadline_text);
-                                    Card deadline = new Card(MainActivity.db.cardTableSize(), pageID, deadlineText.getText().toString(), cal);
-                                    MainActivity.db.addCard(deadline);
-                                    MainActivity.allPagesList.get(pageID).cards.add(MainActivity.db.cardTableSize() - 1);
-                                    MainActivity.db.editPage(MainActivity.allPagesList.get(pageID));
-                                    mAdapter.updateState();
+                                    if (calend != null) {
+                                        EditText deadlineText = d.findViewById(R.id.deadline_text);
+                                        Card deadline = new Card(MainActivity.db.cardTableSize(), pageID, deadlineText.getText().toString(), calend);
+                                        MainActivity.db.addCard(deadline);
+                                        MainActivity.allPagesList.get(pageID).cards.add(MainActivity.db.cardTableSize() - 1);
+                                        MainActivity.db.editPage(MainActivity.allPagesList.get(pageID));
+                                        mAdapter.updateState();
+                                        calend = null;
+                                    }
                                     break;
                                 case 3:
                                     break;
@@ -279,6 +282,8 @@ public class CardsFragment extends Fragment implements RecyclerNameTouchHelper.A
             });
         return view;
     }
+
+    int y, day, m;
 
     public void checkCards()
     {

@@ -32,16 +32,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <ProgressBar
-                android:id="@+id/progress"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:indeterminate="false"
-                android:max="100"
-                android:progress="70" />
-
             <TextView
                 android:id="@+id/setTime"
                 android:layout_width="0dp"
