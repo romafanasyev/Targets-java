@@ -63,10 +63,6 @@ public class MainActivity extends AppCompatActivity {
                     navigate(workFragment);
                     currentSection = false;
                     return true;
-                case R.id.navigation_notifications:
-                    section = Section.Notifications;
-                    navigate(notificationsFragment);
-                    return true;
                 case R.id.navigation_more:
                     section = Section.More;
                     navigate(moreFragment);
